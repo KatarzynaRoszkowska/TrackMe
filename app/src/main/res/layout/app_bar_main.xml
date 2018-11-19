@@ -26,7 +26,7 @@
         app:layout_anchorGravity="top|center" />
 
     <android.support.design.widget.FloatingActionButton
-        android:id="@+id/myMarkers"
+        android:id="@+id/setMarker"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="300dp"

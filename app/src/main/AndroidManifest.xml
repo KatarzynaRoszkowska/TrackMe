@@ -26,6 +26,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".DrawMyRoute"
+            android:label="draw my road" />
     </application>
 
 </manifest>
