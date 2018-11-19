@@ -29,6 +29,9 @@
         <activity
             android:name=".DrawMyRoute"
             android:label="draw my road" />
+
+        <uses-library android:name="org.apache.http.legacy"
+            android:required="false"/>
     </application>
 
 </manifest>
