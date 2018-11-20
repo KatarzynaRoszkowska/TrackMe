@@ -3,19 +3,35 @@ package pl.roszkowska.track;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.view.View;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
-public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+import io.reactivex.disposables.Disposable;
+import pl.roszkowska.track.common.EventDispatcher;
+import pl.roszkowska.track.common.RxEventDispatcher;
+import pl.roszkowska.track.follow.Event;
+import pl.roszkowska.track.follow.FollowActor;
+import pl.roszkowska.track.follow.FollowFeature;
+import pl.roszkowska.track.follow.FollowReducer;
+import pl.roszkowska.track.follow.Repository;
+import pl.roszkowska.track.follow.State;
+
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+
+
+    private FollowFeature feature;
+    private EventDispatcher eventDispatcher;
+    private Disposable subscribe;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,9 +45,9 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(View view) {
                 Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                       .setAction("Action", null).show();
+                        .setAction("Action", null).show();
                 //DrawMyRoute drawMyRoute = new DrawMyRoute();
-                startActivity(new Intent(getApplicationContext(),DrawMyRoute.class));
+                startActivity(new Intent(getApplicationContext(), DrawMyRoute.class));
             }
         });
 
@@ -43,6 +59,34 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+
+        eventDispatcher = new RxEventDispatcher();
+        FollowActor actor = new FollowActor(new Repository() {
+            int id = 0;
+
+            @Override
+            public int createNewFollowRoute() {
+                return id++;
+            }
+
+            @Override
+            public void savePosition(int routeId, double lat, double lon) {
+
+            }
+        });
+        feature = new FollowFeature(new State(),
+                eventDispatcher.ofType(Event.class),
+                actor,
+                new FollowReducer());
+
+        subscribe = feature.states.subscribe(state -> {
+            Log.w("RX", state.toString());
+        });
+
+        eventDispatcher.sendEvent(new Event.StartFollowing());
+        eventDispatcher.sendEvent(new Event.NewStep(0, 100, 100));
+        eventDispatcher.sendEvent(new Event.NewStep(0, 102, 102));
     }
 
     @Override
@@ -93,4 +137,22 @@ public class MainActivity extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
+
+    private void xxx() {
+        eventDispatcher.sendEvent(new pl.roszkowska.track.marker.Event.MarkPoint());
+        eventDispatcher.sendEvent(new Event.StartFollowing());
+    }
+
+//    private void onNewModelArrived(ViewModel viewModel) {
+    // lambda
+//        helloKasia(name -> Log.i("Test", ""));
+//    }
+//
+//    private void helloKasia(Kasia kasia) {
+//        kasia.hello("test");
+//    }
 }
+//
+//interface Kasia {
+//    void hello(String name);
+//}
