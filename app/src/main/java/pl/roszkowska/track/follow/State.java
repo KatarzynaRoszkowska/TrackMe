@@ -27,4 +27,11 @@ public class State {
                 ", steps=" + steps +
                 '}';
     }
+
+    class Step {
+        LatLng latLng;
+        long timestamp;
+        int distance;
+        int speed;
+    }
 }
