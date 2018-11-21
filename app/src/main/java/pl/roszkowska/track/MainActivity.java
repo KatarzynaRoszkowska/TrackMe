@@ -1,10 +1,7 @@
 package pl.roszkowska.track;
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -13,9 +10,8 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 
-import io.reactivex.disposables.Disposable;
+import io.reactivex.disposables.CompositeDisposable;
 import pl.roszkowska.track.common.EventDispatcher;
 import pl.roszkowska.track.common.RxEventDispatcher;
 import pl.roszkowska.track.follow.Event;
@@ -24,14 +20,18 @@ import pl.roszkowska.track.follow.FollowFeature;
 import pl.roszkowska.track.follow.FollowReducer;
 import pl.roszkowska.track.follow.Repository;
 import pl.roszkowska.track.follow.State;
+import pl.roszkowska.track.location.GpsLocationProvider;
+import pl.roszkowska.track.location.LocationProvider;
+import pl.roszkowska.track.ui.MyMapFragment;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
+    private MyMapFragment mMyMapFragment;
 
-    private FollowFeature feature;
+    private FollowFeature mFollowFeature;
     private EventDispatcher eventDispatcher;
-    private Disposable subscribe;
-
+    private CompositeDisposable subscribe = new CompositeDisposable();
+    private LocationProvider mLocationProvider;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,16 +40,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.setMarker);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-                //DrawMyRoute drawMyRoute = new DrawMyRoute();
-                startActivity(new Intent(getApplicationContext(), DrawMyRoute.class));
-            }
-        });
+        mMyMapFragment = (MyMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+
+//        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.setMarker);
+//        fab.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+//                        .setAction("Action", null).show();
+//                DrawMyRoute drawMyRoute = new DrawMyRoute();
+//                startActivity(new Intent(getApplicationContext(), DrawMyRoute.class));
+//            }
+//        });
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -75,18 +77,45 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
             }
         });
-        feature = new FollowFeature(new State(),
+
+        mFollowFeature = new FollowFeature(new State(),
                 eventDispatcher.ofType(Event.class),
                 actor,
                 new FollowReducer());
 
-        subscribe = feature.states.subscribe(state -> {
+        subscribe.add(mFollowFeature.states.subscribe(state -> {
             Log.w("RX", state.toString());
-        });
-
+            if (!state.steps.isEmpty()) {
+                mMyMapFragment.addNewStep(state.steps.getLast());
+            }
+        }, error -> Log.e("RX", "", error)));
         eventDispatcher.sendEvent(new Event.StartFollowing());
-        eventDispatcher.sendEvent(new Event.NewStep(0, 100, 100));
-        eventDispatcher.sendEvent(new Event.NewStep(0, 102, 102));
+
+        mLocationProvider = new GpsLocationProvider(this);
+        subscribe.add(mLocationProvider.locationStream().subscribe(location -> {
+            eventDispatcher.sendEvent(new Event.NewStep(
+                    0,
+                    location.getLatitude(),
+                    location.getLongitude()));
+        }, error -> Log.e("RX", "", error)));
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mLocationProvider.start();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        mLocationProvider.stop();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        subscribe.dispose();
     }
 
     @Override
@@ -136,11 +165,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
-    }
-
-    private void xxx() {
-        eventDispatcher.sendEvent(new pl.roszkowska.track.marker.Event.MarkPoint());
-        eventDispatcher.sendEvent(new Event.StartFollowing());
     }
 
 //    private void onNewModelArrived(ViewModel viewModel) {

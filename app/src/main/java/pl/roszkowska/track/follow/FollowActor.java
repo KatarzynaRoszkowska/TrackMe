@@ -7,10 +7,10 @@ import pl.roszkowska.track.common.Actor;
 
 public class FollowActor implements Actor<Event, Effect> {
 
-    private final Repository repository;
+    private final Repository mRepository;
 
     public FollowActor(Repository repository) {
-        this.repository = repository;
+        this.mRepository = repository;
     }
 
     @Override
@@ -18,7 +18,7 @@ public class FollowActor implements Actor<Event, Effect> {
         if (event instanceof Event.StartFollowing) {
             return Observable
                     .create((ObservableEmitter<Integer> emitter) -> {
-                        emitter.onNext(repository.createNewFollowRoute());
+                        emitter.onNext(mRepository.createNewFollowRoute());
                         emitter.onComplete();
                     })
                     .map(Effect.StartedFollowing::new)
@@ -30,7 +30,7 @@ public class FollowActor implements Actor<Event, Effect> {
             return Observable
                     .create(emitter -> {
                         emitter.onNext(new Effect.NewStep(e.routeId, e.lat, e.lon));
-                        repository.savePosition(e.routeId, e.lat, e.lon);
+                        mRepository.savePosition(e.routeId, e.lat, e.lon);
                         emitter.onComplete();
                     })
                     .cast(Effect.class)

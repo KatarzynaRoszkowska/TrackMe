@@ -15,8 +15,8 @@ public class Feature<State, Event, Effect> {
                     return actor.act(event);
                 })
                 .observeOn(AndroidSchedulers.mainThread())
-                .scan(initialState, (state, event1) -> {
-                    return reducer.reduce(state, event1);
+                .scan(initialState, (state, effect) -> {
+                    return reducer.reduce(state, effect);
                 })
                 .replay(1)
                 .autoConnect(0);

@@ -1,7 +1,7 @@
 package pl.roszkowska.track.marker;
 
-public interface Event {
-    class MarkPoint implements Event {
+public interface Effect {
+    class MarkPoint implements Effect {
         final int id;
         final String name;
 
@@ -11,7 +11,7 @@ public interface Event {
         }
     }
 
-    class RemovePoint implements Event {
+    class RemovePoint implements Effect {
         final int id;
 
         public RemovePoint(int id) {

@@ -2,22 +2,21 @@ package pl.roszkowska.track.follow;
 
 import com.google.android.gms.maps.model.LatLng;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedList;
 
 public class State {
     public int routeId;
     public boolean isFollowing;
-    public List<LatLng> steps;
+    public LinkedList<LatLng> steps;
 
     public State() {
-        steps = new ArrayList<>();
+        steps = new LinkedList<>();
     }
 
     public State(State other) {
         routeId = other.routeId;
         isFollowing = other.isFollowing;
-        steps = new ArrayList<>(other.steps);
+        steps = new LinkedList<>(other.steps);
     }
 
     @Override

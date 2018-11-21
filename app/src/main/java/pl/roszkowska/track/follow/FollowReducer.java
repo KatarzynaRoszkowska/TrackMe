@@ -7,16 +7,16 @@ import pl.roszkowska.track.common.StateReducer;
 public class FollowReducer implements StateReducer<Effect, State> {
 
     @Override
-    public State reduce(State state, Effect event) {
+    public State reduce(State state, Effect effect) {
         State outState = new State(state);
-        if (event instanceof Effect.StartedFollowing) {
-            outState.routeId = ((Effect.StartedFollowing) event).id;
+        if (effect instanceof Effect.StartedFollowing) {
+            outState.routeId = ((Effect.StartedFollowing) effect).id;
             outState.isFollowing = true;
-        } else if (event instanceof Effect.StoppedFollowing) {
+        } else if (effect instanceof Effect.StoppedFollowing) {
             outState.isFollowing = false;
-        } else if (event instanceof Effect.NewStep) {
-            if (state.isFollowing) {
-                Effect.NewStep stepEvent = (Effect.NewStep) event;
+        } else if (effect instanceof Effect.NewStep) {
+            if (outState.isFollowing) {
+                Effect.NewStep stepEvent = (Effect.NewStep) effect;
                 outState.steps.add(new LatLng(stepEvent.lat, stepEvent.lon));
             }
         }
