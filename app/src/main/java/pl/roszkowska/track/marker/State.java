@@ -6,6 +6,7 @@ public class State {
     final LinkedList<MarkerEntity> mMarkerOptionsList;
 
     public State() {
+
         mMarkerOptionsList = new LinkedList<>();
     }
 

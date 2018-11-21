@@ -22,6 +22,9 @@ import pl.roszkowska.track.follow.Repository;
 import pl.roszkowska.track.follow.State;
 import pl.roszkowska.track.location.GpsLocationProvider;
 import pl.roszkowska.track.location.LocationProvider;
+import pl.roszkowska.track.marker.MarkerActor;
+import pl.roszkowska.track.marker.MarkerFeature;
+import pl.roszkowska.track.marker.MarkerReducer;
 import pl.roszkowska.track.ui.MyMapFragment;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
@@ -29,6 +32,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private MyMapFragment mMyMapFragment;
 
     private FollowFeature mFollowFeature;
+    private MarkerFeature mMarkerFeature;
     private EventDispatcher eventDispatcher;
     private CompositeDisposable subscribe = new CompositeDisposable();
     private LocationProvider mLocationProvider;
@@ -64,7 +68,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
 
         eventDispatcher = new RxEventDispatcher();
-        FollowActor actor = new FollowActor(new Repository() {
+        FollowActor followactor = new FollowActor(new Repository() {
             int id = 0;
 
             @Override
@@ -78,9 +82,21 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         });
 
+        MarkerActor markerActor = new MarkerActor(new pl.roszkowska.track.marker.Repository() {
+            @Override
+            public int createNewPoint() {
+                return 0;
+            }
+
+            @Override
+            public void savePoint(int markId, String name) {
+
+            }
+        });
+
         mFollowFeature = new FollowFeature(new State(),
                 eventDispatcher.ofType(Event.class),
-                actor,
+                followactor,
                 new FollowReducer());
 
         subscribe.add(mFollowFeature.states.subscribe(state -> {
@@ -98,6 +114,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     location.getLatitude(),
                     location.getLongitude()));
         }, error -> Log.e("RX", "", error)));
+
+        mMarkerFeature = new MarkerFeature(new pl.roszkowska.track.marker.State(),
+                eventDispatcher.ofType(pl.roszkowska.track.marker.Event.class),
+                markerActor,
+                new MarkerReducer());
+
+        //subscribe.add(mMarkerFeature.states.subscribe(state -> {
+        //   mMyMapFragment.addMarker(state.);
+        //}));
     }
 
     @Override
