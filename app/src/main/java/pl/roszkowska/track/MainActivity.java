@@ -11,6 +11,10 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import java.util.concurrent.TimeUnit;
+
+import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import pl.roszkowska.track.common.EventDispatcher;
 import pl.roszkowska.track.common.RxEventDispatcher;
@@ -82,17 +86,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         });
 
+        mLocationProvider = new GpsLocationProvider(this);
+
         MarkerActor markerActor = new MarkerActor(new pl.roszkowska.track.marker.Repository() {
+            int id = 0;
             @Override
-            public int createNewPoint() {
-                return 0;
+            public int savePoint(String name, double lat, double lon) {
+                return id++;
             }
-
-            @Override
-            public void savePoint(int markId, String name) {
-
-            }
-        });
+        }, mLocationProvider);
 
         mFollowFeature = new FollowFeature(new State(),
                 eventDispatcher.ofType(Event.class),
@@ -101,13 +103,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         subscribe.add(mFollowFeature.states.subscribe(state -> {
             Log.w("RX", state.toString());
-            if (!state.steps.isEmpty()) {
-                mMyMapFragment.addNewStep(state.steps.getLast());
-            }
+            if (state.steps.isEmpty()) return;
+            mMyMapFragment.addNewStep(state.steps.getLast());
         }, error -> Log.e("RX", "", error)));
         eventDispatcher.sendEvent(new Event.StartFollowing());
 
-        mLocationProvider = new GpsLocationProvider(this);
+
         subscribe.add(mLocationProvider.locationStream().subscribe(location -> {
             eventDispatcher.sendEvent(new Event.NewStep(
                     0,
@@ -120,9 +121,26 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 markerActor,
                 new MarkerReducer());
 
-        //subscribe.add(mMarkerFeature.states.subscribe(state -> {
-        //   mMyMapFragment.addMarker(state.);
-        //}));
+        subscribe.add(mMarkerFeature.states.subscribe(state -> {
+            if (state.mMarkerOptionsList.isEmpty()) return;
+            mMyMapFragment.addMarker(state.mMarkerOptionsList);
+        }));
+
+        eventDispatcher.sendEvent(new pl.roszkowska.track.marker.Event.MarkPoint("My new point"));
+
+        subscribe.add(Observable.just("My 2 Marker")
+                .delay(2000, TimeUnit.MILLISECONDS)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(s -> {
+                    eventDispatcher.sendEvent(new pl.roszkowska.track.marker.Event.MarkPoint(s));
+                }));
+
+        subscribe.add(Observable.just("My 3 Marker")
+                .delay(3000, TimeUnit.MILLISECONDS)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(s -> {
+                    eventDispatcher.sendEvent(new pl.roszkowska.track.marker.Event.MarkPoint(s));
+                }));
     }
 
     @Override

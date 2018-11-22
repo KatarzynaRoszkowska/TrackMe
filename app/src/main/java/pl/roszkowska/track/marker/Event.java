@@ -2,11 +2,9 @@ package pl.roszkowska.track.marker;
 
 public interface Event {
     class MarkPoint implements Event {
-        final int id;
         final String name;
 
-        public MarkPoint(int id, String name) {
-            this.id = id;
+        public MarkPoint(String name) {
             this.name = name;
         }
     }

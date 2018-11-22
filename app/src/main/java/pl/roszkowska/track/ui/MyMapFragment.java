@@ -14,12 +14,16 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.maps.model.RoundCap;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import pl.roszkowska.track.marker.State;
 
 public class MyMapFragment extends SupportMapFragment implements OnMapReadyCallback {
-    private GoogleMap mMap;
+    private GoogleMap mMap; // TODO fix loading map async
     private Polyline mPolyline;
-    private List<MarkerOptions> mMarkers = new ArrayList<>();
+    private Map<Integer, MarkerOptions> mMarkers = new HashMap<>();
     private List<LatLng> mSteps = new ArrayList<>();
 
     @Override
@@ -57,14 +61,20 @@ public class MyMapFragment extends SupportMapFragment implements OnMapReadyCallb
         mMap.clear();
         mPolyline = null;
         mSteps.clear();
-        for (MarkerOptions marker : mMarkers) {
+        for (MarkerOptions marker : mMarkers.values()) {
             mMap.addMarker(marker);
         }
     }
 
-    public void addMarker(MarkerOptions marker) {
-        mMarkers.add(marker);
-        mMap.addMarker(marker);
+    public void addMarker(List<State.MarkerEntity> markers) {
+        for (State.MarkerEntity marker : markers) {
+            if (mMarkers.containsKey(marker.id)) continue;
+            MarkerOptions markerOptions = new MarkerOptions();
+            markerOptions.title(marker.name);
+            markerOptions.position(new LatLng(marker.lat, marker.lon));
+            mMarkers.put(marker.id, markerOptions);
+            mMap.addMarker(markerOptions);
+        }
     }
 
     public void clearMarker() {

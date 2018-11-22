@@ -8,13 +8,13 @@ import android.location.LocationManager;
 import android.os.Bundle;
 
 import io.reactivex.Observable;
-import io.reactivex.subjects.PublishSubject;
+import io.reactivex.subjects.BehaviorSubject;
 import io.reactivex.subjects.Subject;
 
 public class GpsLocationProvider implements LocationProvider, LocationListener {
 
     private final LocationManager mLocationManager;
-    private final Subject<Location> mLocationSubject = PublishSubject.create();
+    private final Subject<Location> mLocationSubject = BehaviorSubject.create();
 
     public GpsLocationProvider(Context context) {
         mLocationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
