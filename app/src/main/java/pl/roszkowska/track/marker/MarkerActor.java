@@ -9,7 +9,7 @@ import io.reactivex.schedulers.Schedulers;
 import pl.roszkowska.track.common.Actor;
 import pl.roszkowska.track.location.LocationProvider;
 
-public class MarkerActor implements Actor<Event, Effect> {
+public class MarkerActor implements Actor<Event, State, Effect> {
 
     private final Repository mRepository;
     private final LocationProvider mLocationProvider;
@@ -21,7 +21,7 @@ public class MarkerActor implements Actor<Event, Effect> {
 
     @Override
 
-    public Observable<Effect> act(Event event) {
+    public Observable<Effect> act(State state, Event event) {
         if (event instanceof Event.MarkPoint) {
             return markPoint((Event.MarkPoint) event);
         } else if (event instanceof Event.RemovePoint) {

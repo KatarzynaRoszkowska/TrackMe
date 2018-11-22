@@ -22,7 +22,6 @@ import pl.roszkowska.track.follow.Event;
 import pl.roszkowska.track.follow.FollowActor;
 import pl.roszkowska.track.follow.FollowFeature;
 import pl.roszkowska.track.follow.FollowReducer;
-import pl.roszkowska.track.follow.Repository;
 import pl.roszkowska.track.follow.State;
 import pl.roszkowska.track.location.GpsLocationProvider;
 import pl.roszkowska.track.location.LocationProvider;
@@ -34,7 +33,6 @@ import pl.roszkowska.track.ui.MyMapFragment;
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     private MyMapFragment mMyMapFragment;
-
     private FollowFeature mFollowFeature;
     private MarkerFeature mMarkerFeature;
     private EventDispatcher eventDispatcher;
@@ -72,33 +70,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
 
         eventDispatcher = new RxEventDispatcher();
-        FollowActor followactor = new FollowActor(new Repository() {
-            int id = 0;
-
-            @Override
-            public int createNewFollowRoute() {
-                return id++;
-            }
-
-            @Override
-            public void savePosition(int routeId, double lat, double lon) {
-
-            }
-        });
-
         mLocationProvider = new GpsLocationProvider(this);
 
-        MarkerActor markerActor = new MarkerActor(new pl.roszkowska.track.marker.Repository() {
-            int id = 0;
-            @Override
-            public int savePoint(String name, double lat, double lon) {
-                return id++;
-            }
-        }, mLocationProvider);
+        followDebugCode();
+        markerDebugCode();
+    }
+
+    private void followDebugCode() {
+        FollowActor followActor = new FollowActor(TrackModule.getModule().getFollowRepository());
 
         mFollowFeature = new FollowFeature(new State(),
                 eventDispatcher.ofType(Event.class),
-                followactor,
+                followActor,
                 new FollowReducer());
 
         subscribe.add(mFollowFeature.states.subscribe(state -> {
@@ -108,23 +91,33 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }, error -> Log.e("RX", "", error)));
         eventDispatcher.sendEvent(new Event.StartFollowing());
 
-
         subscribe.add(mLocationProvider.locationStream().subscribe(location -> {
             eventDispatcher.sendEvent(new Event.NewStep(
-                    0,
                     location.getLatitude(),
                     location.getLongitude()));
         }, error -> Log.e("RX", "", error)));
 
-        mMarkerFeature = new MarkerFeature(new pl.roszkowska.track.marker.State(),
-                eventDispatcher.ofType(pl.roszkowska.track.marker.Event.class),
-                markerActor,
-                new MarkerReducer());
 
         subscribe.add(mMarkerFeature.states.subscribe(state -> {
             if (state.mMarkerOptionsList.isEmpty()) return;
             mMyMapFragment.addMarker(state.mMarkerOptionsList);
         }));
+    }
+
+    private void markerDebugCode() {
+        MarkerActor markerActor = new MarkerActor(new pl.roszkowska.track.marker.Repository() {
+            int id = 0;
+
+            @Override
+            public int savePoint(String name, double lat, double lon) {
+                return id++;
+            }
+        }, mLocationProvider);
+
+        mMarkerFeature = new MarkerFeature(new pl.roszkowska.track.marker.State(),
+                eventDispatcher.ofType(pl.roszkowska.track.marker.Event.class),
+                markerActor,
+                new MarkerReducer());
 
         eventDispatcher.sendEvent(new pl.roszkowska.track.marker.Event.MarkPoint("My new point"));
 

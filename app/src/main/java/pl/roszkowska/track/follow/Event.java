@@ -11,12 +11,10 @@ public interface Event {
     }
 
     class NewStep implements Event {
-        public final int routeId;
         public final double lat;
         public final double lon;
 
-        public NewStep(int routeId, double lat, double lon) {
-            this.routeId = routeId;
+        public NewStep(double lat, double lon) {
             this.lat = lat;
             this.lon = lon;
         }

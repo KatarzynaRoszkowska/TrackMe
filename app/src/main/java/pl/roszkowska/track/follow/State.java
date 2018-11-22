@@ -5,7 +5,7 @@ import com.google.android.gms.maps.model.LatLng;
 import java.util.LinkedList;
 
 public class State {
-    public int routeId;
+    public long routeId;
     public boolean isFollowing;
     public LinkedList<LatLng> steps;
 

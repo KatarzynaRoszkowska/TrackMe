@@ -2,9 +2,9 @@ package pl.roszkowska.track.follow;
 
 public interface Effect {
     class StartedFollowing implements Effect {
-        public final int id;
+        public final long id;
 
-        public StartedFollowing(int id) {
+        public StartedFollowing(long id) {
             this.id = id;
         }
     }
@@ -13,12 +13,10 @@ public interface Effect {
     }
 
     class NewStep implements Effect {
-        public final double id;
         public final double lat;
         public final double lon;
 
-        public NewStep(double id, double lat, double lon) {
-            this.id = id;
+        public NewStep(double lat, double lon) {
             this.lat = lat;
             this.lon = lon;
         }

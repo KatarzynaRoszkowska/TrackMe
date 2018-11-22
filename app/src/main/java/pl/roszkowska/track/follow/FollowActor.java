@@ -1,11 +1,9 @@
 package pl.roszkowska.track.follow;
 
 import io.reactivex.Observable;
-import io.reactivex.ObservableEmitter;
-import io.reactivex.schedulers.Schedulers;
 import pl.roszkowska.track.common.Actor;
 
-public class FollowActor implements Actor<Event, Effect> {
+public class FollowActor implements Actor<Event, State, Effect> {
 
     private final Repository mRepository;
 
@@ -14,27 +12,18 @@ public class FollowActor implements Actor<Event, Effect> {
     }
 
     @Override
-    public Observable<Effect> act(Event event) {
+    public Observable<Effect> act(State state, Event event) {
         if (event instanceof Event.StartFollowing) {
-            return Observable
-                    .create((ObservableEmitter<Integer> emitter) -> {
-                        emitter.onNext(mRepository.createNewFollowRoute());
-                        emitter.onComplete();
-                    })
+            return mRepository
+                    .createNewFollowRoute()
                     .map(Effect.StartedFollowing::new)
-                    .cast(Effect.class)
-                    .subscribeOn(Schedulers.io());
+                    .cast(Effect.class);
         } else if (event instanceof Event.NewStep) {
             Event.NewStep e = (Event.NewStep) event;
-
-            return Observable
-                    .create(emitter -> {
-                        emitter.onNext(new Effect.NewStep(e.routeId, e.lat, e.lon));
-                        mRepository.savePosition(e.routeId, e.lat, e.lon);
-                        emitter.onComplete();
-                    })
-                    .cast(Effect.class)
-                    .observeOn(Schedulers.io());
+            return mRepository
+                    .savePosition(state.routeId, e.lat, e.lon)
+                    .map(integer -> new Effect.NewStep(e.lat, e.lon))
+                    .cast(Effect.class);
         } else if (event instanceof Event.StopFollowing) {
             return Observable.just(new Effect.StoppedFollowing());
         }

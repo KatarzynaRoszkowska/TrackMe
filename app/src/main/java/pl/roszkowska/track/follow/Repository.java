@@ -1,7 +1,9 @@
 package pl.roszkowska.track.follow;
 
-public interface Repository {
-    int createNewFollowRoute();
+import io.reactivex.Observable;
 
-    void savePosition(int routeId, double lat, double lon);
+public interface Repository {
+    Observable<Long> createNewFollowRoute();
+
+    Observable<Long> savePosition(long routeId, double lat, double lon);
 }

@@ -4,9 +4,10 @@
 
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
+        android:name="pl.roszkowska.track.TrackApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -16,6 +17,7 @@
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyBM0_CDutQ2s90O8U5motZZzOeIdH7Q0Jo" />
+
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name"
@@ -30,8 +32,9 @@
             android:name=".DrawMyRoute"
             android:label="draw my road" />
 
-        <uses-library android:name="org.apache.http.legacy"
-            android:required="false"/>
+        <uses-library
+            android:name="org.apache.http.legacy"
+            android:required="false" />
     </application>
 
 </manifest>

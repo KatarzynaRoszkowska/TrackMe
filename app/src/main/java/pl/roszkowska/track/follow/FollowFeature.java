@@ -9,7 +9,7 @@ public class FollowFeature extends Feature<State, Event, Effect> {
 
     public FollowFeature(State initialState,
                          Observable<Event> events,
-                         Actor<Event, Effect> actor,
+                         Actor<Event, State, Effect> actor,
                          StateReducer<Effect, State> reducer) {
         super(initialState, events, actor, reducer);
     }
