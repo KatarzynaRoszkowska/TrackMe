@@ -32,7 +32,7 @@
         android:layout_marginLeft="300dp"
         android:layout_marginTop="520dp"
         android:clickable="true"
-        app:srcCompat="@android:drawable/ic_dialog_map" />
+        app:srcCompat="@drawable/ic_add_location_black_24dp" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/trackMe"
@@ -41,6 +41,6 @@
         android:layout_marginLeft="240dp"
         android:layout_marginTop="520dp"
         android:clickable="true"
-        app:srcCompat="@drawable/ic_menu_gallery" />
+        app:srcCompat="@drawable/ic_arrow_upward_black_24dp" />
 
 </android.support.design.widget.CoordinatorLayout>

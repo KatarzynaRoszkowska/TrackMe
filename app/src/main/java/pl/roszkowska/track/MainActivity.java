@@ -1,5 +1,6 @@
 package pl.roszkowska.track;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -29,6 +30,7 @@ import pl.roszkowska.track.marker.MarkerActor;
 import pl.roszkowska.track.marker.MarkerFeature;
 import pl.roszkowska.track.marker.MarkerReducer;
 import pl.roszkowska.track.ui.MyMapFragment;
+import pl.roszkowska.track.ui.RealTimeGraph;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -48,12 +50,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         mMyMapFragment = (MyMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
 
-//        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.setMarker);
-//        fab.setOnClickListener(new View.OnClickListener() {
+//        FloatingActionButton newMarker = (FloatingActionButton) findViewById(R.id.setMarker);
+//        newMarker.setOnClickListener(new View.OnClickListener() {
 //            @Override
 //            public void onClick(View view) {
-//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-//                        .setAction("Action", null).show();
 //                DrawMyRoute drawMyRoute = new DrawMyRoute();
 //                startActivity(new Intent(getApplicationContext(), DrawMyRoute.class));
 //            }
@@ -76,6 +76,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         markerDebugCode();
     }
 
+
     private void followDebugCode() {
         FollowActor followActor = new FollowActor(TrackModule.getModule().getFollowRepository());
 
@@ -89,6 +90,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             if (state.steps.isEmpty()) return;
             mMyMapFragment.addNewStep(state.steps.getLast());
         }, error -> Log.e("RX", "", error)));
+
         eventDispatcher.sendEvent(new Event.StartFollowing());
 
         subscribe.add(mLocationProvider.locationStream().subscribe(location -> {
@@ -98,15 +100,32 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }, error -> Log.e("RX", "", error)));
 
 
-        subscribe.add(mMarkerFeature.states.subscribe(state -> {
-            if (state.mMarkerOptionsList.isEmpty()) return;
-            mMyMapFragment.addMarker(state.mMarkerOptionsList);
-        }));
+//        subscribe.add(mMarkerFeature.states.subscribe(state -> {
+//            if (state.mMarkerOptionsList.isEmpty()) return;
+//            mMyMapFragment.addMarker(state.mMarkerOptionsList);
+//        }));
     }
 
     private void markerDebugCode() {
-        MarkerActor markerActor = new MarkerActor(new pl.roszkowska.track.marker.Repository() {
-            int id = 0;
+        MarkerActor markerActor = new MarkerActor(TrackModule.getModule().getMarkerRepository(), mLocationProvider);
+
+        mMarkerFeature = new MarkerFeature(new pl.roszkowska.track.marker.State(),
+                eventDispatcher.ofType(pl.roszkowska.track.marker.Event.class),
+                markerActor,
+                new MarkerReducer());
+
+        subscribe.add(mMarkerFeature.states.subscribe(state -> {
+            if(state.mMarkerOptionsList.isEmpty()) return;
+            mMyMapFragment.addMarker(state.mMarkerOptionsList.getLast());
+                }, error -> Log.e("RX", "", error)));
+
+
+        subscribe.add(mLocationProvider.locationStream().subscribe(location -> {
+            eventDispatcher.sendEvent(new pl.roszkowska.track.marker.Event.MarkPoint("MarkName1"));
+        },error -> Log.e("RX", "", error)));
+
+     /*  MarkerActor markerActor = new MarkerActor(new pl.roszkowska.track.marker.Repository() {
+             int id = 0;
 
             @Override
             public int savePoint(String name, double lat, double lon) {
@@ -134,6 +153,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 .subscribe(s -> {
                     eventDispatcher.sendEvent(new pl.roszkowska.track.marker.Event.MarkPoint(s));
                 }));
+                */
+
     }
 
     @Override
@@ -173,13 +194,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.graphItem) {
+            Intent intent1 = new Intent(this,RealTimeGraph.class);
+            this.startActivity(intent1);
             return true;
         }
 
@@ -189,7 +208,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
-        // Handle navigation view item clicks here.
         int id = item.getItemId();
 
         if (id == R.id.statistics) {
@@ -202,17 +220,4 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
-
-//    private void onNewModelArrived(ViewModel viewModel) {
-    // lambda
-//        helloKasia(name -> Log.i("Test", ""));
-//    }
-//
-//    private void helloKasia(Kasia kasia) {
-//        kasia.hello("test");
-//    }
 }
-//
-//interface Kasia {
-//    void hello(String name);
-//}

@@ -40,7 +40,7 @@ public class MarkerActor implements Actor<Event, State, Effect> {
                 .observeOn(Schedulers.io());
     }
 
-    private Observable<Effect> markPoint(Event.MarkPoint event) {
+   private Observable<Effect> markPoint(Event.MarkPoint event) {
         return Observable.zip(
                 mLocationProvider.locationStream(),
                 Observable.just(event),
@@ -53,8 +53,7 @@ public class MarkerActor implements Actor<Event, State, Effect> {
         Location location = pair.first;
         Event.MarkPoint e = pair.second;
         return Observable.create(emitter -> {
-            int newId = mRepository.savePoint(e.name, location.getLatitude(), location.getLongitude());
-            Effect effect = new Effect.MarkPoint(newId, e.name, location.getLatitude(), location.getLongitude());
+            Effect effect = new Effect.MarkPoint(e.name, location.getLatitude(), location.getLongitude());
             emitter.onNext(effect);
             emitter.onComplete();
         })

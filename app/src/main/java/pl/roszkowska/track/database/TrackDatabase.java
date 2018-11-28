@@ -6,13 +6,16 @@ import android.arch.persistence.room.RoomDatabase;
 @Database(
         entities = {
                 RouteEntity.class,
-                StepEntity.class
+                StepEntity.class,
+                MarkerEntity.class
         },
-        version = 1,
+        version = 2,
         exportSchema = false
 )
 public abstract class TrackDatabase extends RoomDatabase {
     public abstract StepDao daoStep();
 
     public abstract RouteDao daoRoute();
+
+    public abstract MarkerDao doaMarker();
 }

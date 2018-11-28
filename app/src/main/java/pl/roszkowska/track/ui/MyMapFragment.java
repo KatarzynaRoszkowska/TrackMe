@@ -18,6 +18,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import pl.roszkowska.track.database.MarkerEntity;
 import pl.roszkowska.track.marker.State;
 
 public class MyMapFragment extends SupportMapFragment implements OnMapReadyCallback {
@@ -66,15 +67,25 @@ public class MyMapFragment extends SupportMapFragment implements OnMapReadyCallb
         }
     }
 
-    public void addMarker(List<State.MarkerEntity> markers) {
-        for (State.MarkerEntity marker : markers) {
-            if (mMarkers.containsKey(marker.id)) continue;
-            MarkerOptions markerOptions = new MarkerOptions();
-            markerOptions.title(marker.name);
-            markerOptions.position(new LatLng(marker.lat, marker.lon));
-            mMarkers.put(marker.id, markerOptions);
-            mMap.addMarker(markerOptions);
-        }
+//    public void addMarker(List<MarkerEntity> markers) {
+//        for (MarkerEntity marker : markers) {
+//            if (mMarkers.containsKey(marker.id)) continue;
+//            MarkerOptions markerOptions = new MarkerOptions();
+//            markerOptions.title(marker.name);
+//            markerOptions.position(new LatLng(marker.lat, marker.lon));
+//            mMarkers.put(marker.id, markerOptions);
+//            mMap.addMarker(markerOptions);
+//        }
+//    }
+
+    public void addMarker(MarkerEntity marker) {
+            if (!mMarkers.containsKey(marker.id)) {
+                MarkerOptions markerOptions = new MarkerOptions();
+                markerOptions.title(marker.name);
+                markerOptions.position(new LatLng(marker.lat, marker.lon));
+                mMarkers.put(marker.id, markerOptions);
+                mMap.addMarker(markerOptions);
+            }
     }
 
     public void clearMarker() {

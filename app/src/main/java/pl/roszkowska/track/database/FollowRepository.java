@@ -7,7 +7,8 @@ import pl.roszkowska.track.follow.Repository;
 public class FollowRepository implements Repository {
     private final TrackDatabase mTrackDatabase;
 
-    public FollowRepository(TrackDatabase trackDatabase) {
+    public FollowRepository(TrackDatabase trackDatabase)
+    {
         mTrackDatabase = trackDatabase;
     }
 

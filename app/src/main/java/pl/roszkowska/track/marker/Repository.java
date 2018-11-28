@@ -1,6 +1,8 @@
 package pl.roszkowska.track.marker;
 
+import io.reactivex.Observable;
+
 public interface Repository {
 
-    int savePoint(String name, double lat, double lon);
+    Observable<Integer> savePoint(String name, double lat, double lon);
 }

@@ -2,8 +2,11 @@ package pl.roszkowska.track;
 
 import android.content.Context;
 
+import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
 import pl.roszkowska.track.database.DatabaseProvider;
 import pl.roszkowska.track.database.FollowRepository;
+import pl.roszkowska.track.database.MarkerRepository;
 import pl.roszkowska.track.follow.Repository;
 
 public class TrackModule {
@@ -12,14 +15,14 @@ public class TrackModule {
 
     private final DatabaseProvider mDatabaseProvider;
     private final Repository mFollowRepository;
-    private final pl.roszkowska.track.marker.Repository mTrackRepository;
+    private final pl.roszkowska.track.marker.Repository mMarkerRepository;
 
     private TrackModule(DatabaseProvider databaseProvider,
                         Repository followRepository,
                         pl.roszkowska.track.marker.Repository trackRepository) {
         mDatabaseProvider = databaseProvider;
         mFollowRepository = followRepository;
-        mTrackRepository = trackRepository;
+        mMarkerRepository = trackRepository;
     }
 
     public DatabaseProvider getDatabaseProvider() {
@@ -31,7 +34,7 @@ public class TrackModule {
     }
 
     public pl.roszkowska.track.marker.Repository getTrackRepository() {
-        return mTrackRepository;
+        return mMarkerRepository;
     }
 
     public static void setup(Context context) {
@@ -41,12 +44,17 @@ public class TrackModule {
         DatabaseProvider databaseProvider = new DatabaseProvider(context);
         sInstance = new TrackModule(databaseProvider,
                 new FollowRepository(databaseProvider.getDatabase()),
-                new pl.roszkowska.track.marker.Repository() {
+                /*new pl.roszkowska.track.marker.Repository() {
                     @Override
-                    public int savePoint(String name, double lat, double lon) {
+                    public Observable<Integer> savePoint(String name, double lat, double lon) {
                         return 0;
                     }
-                });
+                })*/
+                new MarkerRepository(databaseProvider.getDatabase()));
+    }
+
+    public pl.roszkowska.track.marker.Repository getMarkerRepository() {
+        return mMarkerRepository;
     }
 
     public static TrackModule getModule() {
