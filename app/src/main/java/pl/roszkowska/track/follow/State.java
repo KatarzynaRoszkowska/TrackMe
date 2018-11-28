@@ -5,6 +5,7 @@ import java.util.LinkedList;
 public class State {
     public long routeId;
     public boolean isFollowing;
+    public boolean canShowHistogram;
     public LinkedList<Step> steps;
 
     public State() {

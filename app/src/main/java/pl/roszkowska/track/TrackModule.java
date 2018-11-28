@@ -2,8 +2,8 @@ package pl.roszkowska.track;
 
 import android.content.Context;
 
-import io.reactivex.Observable;
-import io.reactivex.ObservableEmitter;
+import pl.roszkowska.track.common.EventDispatcher;
+import pl.roszkowska.track.common.RxEventDispatcher;
 import pl.roszkowska.track.database.DatabaseProvider;
 import pl.roszkowska.track.database.FollowRepository;
 import pl.roszkowska.track.database.MarkerRepository;
@@ -16,13 +16,16 @@ public class TrackModule {
     private final DatabaseProvider mDatabaseProvider;
     private final Repository mFollowRepository;
     private final pl.roszkowska.track.marker.Repository mMarkerRepository;
+    private final EventDispatcher mEventDispatcher;
 
     private TrackModule(DatabaseProvider databaseProvider,
                         Repository followRepository,
-                        pl.roszkowska.track.marker.Repository trackRepository) {
+                        pl.roszkowska.track.marker.Repository trackRepository,
+                        EventDispatcher eventDispatcher) {
         mDatabaseProvider = databaseProvider;
         mFollowRepository = followRepository;
         mMarkerRepository = trackRepository;
+        mEventDispatcher = eventDispatcher;
     }
 
     public DatabaseProvider getDatabaseProvider() {
@@ -31,6 +34,10 @@ public class TrackModule {
 
     public Repository getFollowRepository() {
         return mFollowRepository;
+    }
+
+    public EventDispatcher getEventDispatcher() {
+        return mEventDispatcher;
     }
 
     public pl.roszkowska.track.marker.Repository getTrackRepository() {
@@ -44,13 +51,8 @@ public class TrackModule {
         DatabaseProvider databaseProvider = new DatabaseProvider(context);
         sInstance = new TrackModule(databaseProvider,
                 new FollowRepository(databaseProvider.getDatabase()),
-                /*new pl.roszkowska.track.marker.Repository() {
-                    @Override
-                    public Observable<Integer> savePoint(String name, double lat, double lon) {
-                        return 0;
-                    }
-                })*/
-                new MarkerRepository(databaseProvider.getDatabase()));
+                new MarkerRepository(databaseProvider.getDatabase()),
+                new RxEventDispatcher());
     }
 
     public pl.roszkowska.track.marker.Repository getMarkerRepository() {

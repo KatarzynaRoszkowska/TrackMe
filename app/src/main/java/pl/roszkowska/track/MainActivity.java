@@ -16,7 +16,6 @@ import android.view.View;
 
 import io.reactivex.disposables.CompositeDisposable;
 import pl.roszkowska.track.common.EventDispatcher;
-import pl.roszkowska.track.common.RxEventDispatcher;
 import pl.roszkowska.track.follow.Event;
 import pl.roszkowska.track.follow.FollowActor;
 import pl.roszkowska.track.follow.FollowFeature;
@@ -35,7 +34,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private MyMapFragment mMyMapFragment;
     private FollowFeature mFollowFeature;
     private MarkerFeature mMarkerFeature;
-    private EventDispatcher eventDispatcher;
+    private EventDispatcher eventDispatcher = TrackModule.getModule().getEventDispatcher();
     private CompositeDisposable subscribe = new CompositeDisposable();
     private LocationProvider mLocationProvider;
 
@@ -66,7 +65,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         navigationView.setNavigationItemSelectedListener(this);
 
 
-        eventDispatcher = new RxEventDispatcher();
         mLocationProvider = new GpsLocationProvider(this);
 
         followDebugCode();

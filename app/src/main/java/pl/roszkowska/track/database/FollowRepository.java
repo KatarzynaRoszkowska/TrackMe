@@ -2,6 +2,8 @@ package pl.roszkowska.track.database;
 
 import android.util.Log;
 
+import java.util.List;
+
 import io.reactivex.Observable;
 import io.reactivex.schedulers.Schedulers;
 import pl.roszkowska.track.follow.Repository;
@@ -55,12 +57,32 @@ public class FollowRepository implements Repository {
             StepEntity lastStep = mTrackDatabase.daoStep().getLastStep(routeId);
             Log.w("DB", "Finish reading last route step " + routeId + " STEP: " + (lastStep == null ? "NULL" : lastStep.stepId));
             if (lastStep != null) {
-                emitter.onNext(new StepInfo(lastStep.lat, lastStep.lon, lastStep.timestamp));
+                emitter.onNext(new StepInfo(lastStep.lat, lastStep.lon, lastStep.timestamp, lastStep.distanceBetweenLastStep));
             } else {
                 emitter.onNext(new StepInfo()); // blank
             }
             emitter.onComplete();
         }).cast(StepInfo.class)
+                .subscribeOn(Schedulers.io());
+    }
+
+    @Override
+    public Observable<List<StepInfo>> getAllSteps(long routeId) {
+        return Observable.create(emitter -> {
+            List<StepEntity> steps = mTrackDatabase.daoStep().getRouteSteps(routeId);
+
+            for (StepEntity entity : steps) {
+                emitter.onNext(new StepInfo(entity.lat,
+                        entity.lon,
+                        entity.timestamp,
+                        entity.distanceBetweenLastStep)
+                );
+            }
+
+            emitter.onComplete();
+        }).cast(StepInfo.class)
+                .toList()
+                .toObservable()
                 .subscribeOn(Schedulers.io());
     }
 }
