@@ -52,12 +52,9 @@ public class MarkerActor implements Actor<Event, State, Effect> {
     private Observable<Effect> savePointToRepository(Pair<Location, Event.MarkPoint> pair) {
         Location location = pair.first;
         Event.MarkPoint e = pair.second;
-        return Observable.create(emitter -> {
-            Effect effect = new Effect.MarkPoint(e.name, location.getLatitude(), location.getLongitude());
-            emitter.onNext(effect);
-            emitter.onComplete();
-        })
-                .cast(Effect.class)
-                .subscribeOn(Schedulers.io());
+        return mRepository
+                .savePoint(e.name, location.getLatitude(), location.getLongitude())
+                .map(id -> new Effect.MarkPoint(id, e.name, location.getLatitude(), location.getLongitude()))
+                .cast(Effect.class);
     }
 }

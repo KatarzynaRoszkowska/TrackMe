@@ -18,13 +18,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import pl.roszkowska.track.database.MarkerEntity;
-import pl.roszkowska.track.marker.State;
+import static pl.roszkowska.track.marker.State.MarkerEntity;
 
 public class MyMapFragment extends SupportMapFragment implements OnMapReadyCallback {
     private GoogleMap mMap; // TODO fix loading map async
     private Polyline mPolyline;
-    private Map<Integer, MarkerOptions> mMarkers = new HashMap<>();
+    private Map<Long, MarkerOptions> mMarkers = new HashMap<>();
     private List<LatLng> mSteps = new ArrayList<>();
 
     @Override
@@ -67,25 +66,15 @@ public class MyMapFragment extends SupportMapFragment implements OnMapReadyCallb
         }
     }
 
-//    public void addMarker(List<MarkerEntity> markers) {
-//        for (MarkerEntity marker : markers) {
-//            if (mMarkers.containsKey(marker.id)) continue;
-//            MarkerOptions markerOptions = new MarkerOptions();
-//            markerOptions.title(marker.name);
-//            markerOptions.position(new LatLng(marker.lat, marker.lon));
-//            mMarkers.put(marker.id, markerOptions);
-//            mMap.addMarker(markerOptions);
-//        }
-//    }
-
-    public void addMarker(MarkerEntity marker) {
-            if (!mMarkers.containsKey(marker.id)) {
-                MarkerOptions markerOptions = new MarkerOptions();
-                markerOptions.title(marker.name);
-                markerOptions.position(new LatLng(marker.lat, marker.lon));
-                mMarkers.put(marker.id, markerOptions);
-                mMap.addMarker(markerOptions);
-            }
+    public void addMarker(List<MarkerEntity> markers) {
+        for (MarkerEntity marker : markers) {
+            if (mMarkers.containsKey(marker.id)) continue;
+            MarkerOptions markerOptions = new MarkerOptions();
+            markerOptions.title(marker.name);
+            markerOptions.position(new LatLng(marker.lat, marker.lon));
+            mMarkers.put(marker.id, markerOptions);
+            mMap.addMarker(markerOptions);
+        }
     }
 
     public void clearMarker() {

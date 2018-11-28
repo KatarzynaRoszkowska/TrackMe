@@ -12,7 +12,7 @@ public class MarkerRepository implements Repository {
     }
 
     @Override
-    public Observable<Integer> savePoint(String name, double lat, double lon) {
+    public Observable<Long> savePoint(String name, double lat, double lon) {
         return Observable.create(emitter -> {
             MarkerEntity entity = new MarkerEntity();
             entity.name = name;
@@ -22,8 +22,7 @@ public class MarkerRepository implements Repository {
             long id = mTrackDatabase.doaMarker().savePoint(entity);
             emitter.onNext(id);
             emitter.onComplete();
-
-        }).cast(Integer.class)
+        }).cast(Long.class)
                 .subscribeOn(Schedulers.io());
     }
 }

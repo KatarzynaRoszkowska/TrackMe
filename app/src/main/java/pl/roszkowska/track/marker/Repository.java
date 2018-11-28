@@ -4,5 +4,5 @@ import io.reactivex.Observable;
 
 public interface Repository {
 
-    Observable<Integer> savePoint(String name, double lat, double lon);
+    Observable<Long> savePoint(String name, double lat, double lon);
 }

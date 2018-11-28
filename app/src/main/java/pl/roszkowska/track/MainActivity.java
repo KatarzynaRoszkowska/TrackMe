@@ -2,6 +2,7 @@ package pl.roszkowska.track;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -11,11 +12,8 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
-import java.util.concurrent.TimeUnit;
-
-import io.reactivex.Observable;
-import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import pl.roszkowska.track.common.EventDispatcher;
 import pl.roszkowska.track.common.RxEventDispatcher;
@@ -50,14 +48,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         mMyMapFragment = (MyMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
 
-//        FloatingActionButton newMarker = (FloatingActionButton) findViewById(R.id.setMarker);
-//        newMarker.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                DrawMyRoute drawMyRoute = new DrawMyRoute();
-//                startActivity(new Intent(getApplicationContext(), DrawMyRoute.class));
-//            }
-//        });
+        FloatingActionButton newMarker = (FloatingActionButton) findViewById(R.id.setMarker);
+        newMarker.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                eventDispatcher.sendEvent(new pl.roszkowska.track.marker.Event.MarkPoint("Test"));
+            }
+        });
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -116,13 +113,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         subscribe.add(mMarkerFeature.states.subscribe(state -> {
             if(state.mMarkerOptionsList.isEmpty()) return;
-            mMyMapFragment.addMarker(state.mMarkerOptionsList.getLast());
+            mMyMapFragment.addMarker(state.mMarkerOptionsList);
                 }, error -> Log.e("RX", "", error)));
 
-
-        subscribe.add(mLocationProvider.locationStream().subscribe(location -> {
-            eventDispatcher.sendEvent(new pl.roszkowska.track.marker.Event.MarkPoint("MarkName1"));
-        },error -> Log.e("RX", "", error)));
 
      /*  MarkerActor markerActor = new MarkerActor(new pl.roszkowska.track.marker.Repository() {
              int id = 0;

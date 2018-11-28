@@ -2,8 +2,6 @@ package pl.roszkowska.track.marker;
 
 import java.util.LinkedList;
 
-import pl.roszkowska.track.database.MarkerEntity;
-
 public class State {
 
     public final LinkedList<MarkerEntity> mMarkerOptionsList;
@@ -18,13 +16,13 @@ public class State {
 
     }
 
-   /* public static class MarkerEntity {
-        public final int id;
+    public static class MarkerEntity {
+        public final long id;
         public final String name;
         public final double lat;
         public final double lon;
 
-        public MarkerEntity(int id,
+        public MarkerEntity(long id,
                             String name,
                             double lastKnowLat,
                             double lon) {
@@ -33,5 +31,5 @@ public class State {
             this.lat = lastKnowLat;
             this.lon = lon;
         }
-    }*/
+    }
 }
