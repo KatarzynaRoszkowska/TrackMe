@@ -37,10 +37,11 @@ public class MyMapFragment extends SupportMapFragment implements OnMapReadyCallb
         mMap = googleMap;
     }
 
-    public void addNewStep(LatLng loc) {
+    public void addNewStep(double lat, double lon) {
+        LatLng latLng = new LatLng(lat, lon);
         if (mPolyline == null) {
             PolylineOptions polylineOptions = new PolylineOptions();
-            polylineOptions.add(loc);
+            polylineOptions.add(latLng);
             mPolyline = mMap.addPolyline(polylineOptions);
             mPolyline.setColor(Color.RED);
             mPolyline.setWidth(5);
@@ -48,13 +49,13 @@ public class MyMapFragment extends SupportMapFragment implements OnMapReadyCallb
 
         } else {
             List<LatLng> points = mPolyline.getPoints();
-            points.add(loc);
+            points.add(latLng);
             mPolyline.setPoints(points);
         }
 
-        mSteps.add(loc);
+        mSteps.add(latLng);
         mMap.moveCamera(CameraUpdateFactory.zoomTo(mMap.getMaxZoomLevel() - 5));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(loc));
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
     }
 
     public void clearRoute() {

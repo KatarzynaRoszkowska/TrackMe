@@ -10,4 +10,6 @@ public class StepEntity {
     long routeId;
     double lat;
     double lon;
+    double timestamp;
+    double distanceBetweenLastStep;
 }

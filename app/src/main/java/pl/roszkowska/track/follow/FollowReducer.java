@@ -1,8 +1,7 @@
 package pl.roszkowska.track.follow;
 
-import com.google.android.gms.maps.model.LatLng;
-
 import pl.roszkowska.track.common.StateReducer;
+import pl.roszkowska.track.follow.State.Step;
 
 public class FollowReducer implements StateReducer<Effect, State> {
 
@@ -17,7 +16,11 @@ public class FollowReducer implements StateReducer<Effect, State> {
         } else if (effect instanceof Effect.NewStep) {
             if (outState.isFollowing) {
                 Effect.NewStep stepEvent = (Effect.NewStep) effect;
-                outState.steps.add(new LatLng(stepEvent.lat, stepEvent.lon));
+                outState.steps.add(new Step(stepEvent.lat,
+                        stepEvent.lon,
+                        stepEvent.timestamp,
+                        stepEvent.distance)
+                );
             }
         }
         return outState;

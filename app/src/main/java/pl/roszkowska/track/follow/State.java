@@ -1,13 +1,11 @@
 package pl.roszkowska.track.follow;
 
-import com.google.android.gms.maps.model.LatLng;
-
 import java.util.LinkedList;
 
 public class State {
     public long routeId;
     public boolean isFollowing;
-    public LinkedList<LatLng> steps;
+    public LinkedList<Step> steps;
 
     public State() {
         steps = new LinkedList<>();
@@ -28,10 +26,17 @@ public class State {
                 '}';
     }
 
-    class Step {
-        LatLng latLng;
-        long timestamp;
-        int distance;
-        int speed;
+    public static class Step {
+        public final double lat;
+        public final double lon;
+        public final long distance;
+        public final long timestamp;
+
+        public Step(double lat, double lon, long timestamp, long distance) {
+            this.lat = lat;
+            this.lon = lon;
+            this.timestamp = timestamp;
+            this.distance = distance;
+        }
     }
 }

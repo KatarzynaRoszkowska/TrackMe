@@ -1,9 +1,9 @@
 package pl.roszkowska.track.ui;
 
 import android.graphics.Color;
+import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 
 import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.series.DataPoint;
@@ -37,6 +37,7 @@ public class RealTimeGraph extends AppCompatActivity {
         //graph.getViewport().setXAxisBoundsManual(true);
         graph.getViewport().setScalable(true);
         graph.getViewport().setScrollable(true);
+        graph.getViewport().scrollToEnd();
 
 
         addMyPoint();

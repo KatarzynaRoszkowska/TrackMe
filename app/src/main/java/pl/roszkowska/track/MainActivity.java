@@ -85,7 +85,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         subscribe.add(mFollowFeature.states.subscribe(state -> {
             Log.w("RX", state.toString());
             if (state.steps.isEmpty()) return;
-            mMyMapFragment.addNewStep(state.steps.getLast());
+            State.Step last = state.steps.getLast();
+
+
+            Log.w("STEP", "Last step distance: " + last.distance);
+
+            mMyMapFragment.addNewStep(last.lat, last.lon);
         }, error -> Log.e("RX", "", error)));
 
         eventDispatcher.sendEvent(new Event.StartFollowing());
@@ -112,9 +117,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 new MarkerReducer());
 
         subscribe.add(mMarkerFeature.states.subscribe(state -> {
-            if(state.mMarkerOptionsList.isEmpty()) return;
+            if (state.mMarkerOptionsList.isEmpty()) return;
             mMyMapFragment.addMarker(state.mMarkerOptionsList);
-                }, error -> Log.e("RX", "", error)));
+        }, error -> Log.e("RX", "", error)));
 
 
      /*  MarkerActor markerActor = new MarkerActor(new pl.roszkowska.track.marker.Repository() {
@@ -190,7 +195,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         int id = item.getItemId();
 
         if (id == R.id.graphItem) {
-            Intent intent1 = new Intent(this,RealTimeGraph.class);
+            Intent intent1 = new Intent(this, RealTimeGraph.class);
             this.startActivity(intent1);
             return true;
         }
