@@ -1,60 +1,59 @@
 package pl.roszkowska.track.marker;
 
-import android.location.Location;
 import android.support.annotation.NonNull;
 import android.util.Pair;
 
 import io.reactivex.Observable;
 import io.reactivex.schedulers.Schedulers;
 import pl.roszkowska.track.common.Actor;
-import pl.roszkowska.track.location.LocationProvider;
+import pl.roszkowska.track.location.LocationInfo;
 
-public class MarkerActor implements Actor<Event, State, Effect> {
+public class MarkerActor implements Actor<MarkerEvent, MarkerState, MarkerEffect> {
 
-    private final Repository mRepository;
-    private final LocationProvider mLocationProvider;
+    private final MarkerRepository mRepository;
+    private final Observable<LocationInfo> mLocationStream;
 
-    public MarkerActor(Repository repository, LocationProvider locationProvider) {
+    public MarkerActor(MarkerRepository repository, Observable<LocationInfo> locationStream) {
         this.mRepository = repository;
-        mLocationProvider = locationProvider;
+        mLocationStream = locationStream;
     }
 
     @Override
 
-    public Observable<Effect> act(State state, Event event) {
-        if (event instanceof Event.MarkPoint) {
-            return markPoint((Event.MarkPoint) event);
-        } else if (event instanceof Event.RemovePoint) {
-            return removePoint((Event.RemovePoint) event);
+    public Observable<MarkerEffect> act(MarkerState state, MarkerEvent event) {
+        if (event instanceof MarkerEvent.MarkPoint) {
+            return markPoint((MarkerEvent.MarkPoint) event);
+        } else if (event instanceof MarkerEvent.RemovePoint) {
+            return removePoint((MarkerEvent.RemovePoint) event);
         }
         throw new IllegalStateException("Unknown event");
     }
 
-    private Observable<Effect> removePoint(Event.RemovePoint event) {
+    private Observable<MarkerEffect> removePoint(MarkerEvent.RemovePoint event) {
         return Observable
                 .create(emitter -> {
-                    emitter.onNext(new Effect.RemovePoint(event.id));
+                    emitter.onNext(new MarkerEffect.RemovePoint(event.id));
                     emitter.onComplete();
                 })
-                .cast(Effect.class)
+                .cast(MarkerEffect.class)
                 .observeOn(Schedulers.io());
     }
 
-   private Observable<Effect> markPoint(Event.MarkPoint event) {
+    private Observable<MarkerEffect> markPoint(MarkerEvent.MarkPoint event) {
         return Observable.zip(
-                mLocationProvider.locationStream(),
+                mLocationStream,
                 Observable.just(event),
                 Pair::new
         ).flatMap(this::savePointToRepository);
     }
 
     @NonNull
-    private Observable<Effect> savePointToRepository(Pair<Location, Event.MarkPoint> pair) {
-        Location location = pair.first;
-        Event.MarkPoint e = pair.second;
+    private Observable<MarkerEffect> savePointToRepository(Pair<LocationInfo, MarkerEvent.MarkPoint> pair) {
+        LocationInfo location = pair.first;
+        MarkerEvent.MarkPoint e = pair.second;
         return mRepository
-                .savePoint(e.name, location.getLatitude(), location.getLongitude())
-                .map(id -> new Effect.MarkPoint(id, e.name, location.getLatitude(), location.getLongitude()))
-                .cast(Effect.class);
+                .savePoint(e.name, location.lat, location.lon)
+                .map(id -> new MarkerEffect.MarkPoint(id, e.name, location.lat, location.lon))
+                .cast(MarkerEffect.class);
     }
 }

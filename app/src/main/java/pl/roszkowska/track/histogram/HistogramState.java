@@ -3,7 +3,7 @@ package pl.roszkowska.track.histogram;
 import java.util.ArrayList;
 import java.util.List;
 
-public class State {
+public class HistogramState {
     public int averageSpeedForRoute;
     public List<Step> steps = new ArrayList<>();
 

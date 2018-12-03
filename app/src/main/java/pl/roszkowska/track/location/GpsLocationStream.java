@@ -11,22 +11,20 @@ import io.reactivex.Observable;
 import io.reactivex.subjects.BehaviorSubject;
 import io.reactivex.subjects.Subject;
 
-public class GpsLocationProvider implements LocationProvider, LocationListener {
+public class GpsLocationStream implements LocationListener {
 
     private final LocationManager mLocationManager;
-    private final Subject<Location> mLocationSubject = BehaviorSubject.create();
+    private final Subject<LocationInfo> mLocationSubject = BehaviorSubject.create();
 
-    public GpsLocationProvider(Context context) {
+    public GpsLocationStream(Context context) {
         mLocationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
     }
 
-    @Override
-    public Observable<Location> locationStream() {
+    public Observable<LocationInfo> locationStream() {
         return mLocationSubject;
     }
 
     @SuppressLint("MissingPermission")
-    @Override
     public void start() {
         mLocationManager.requestLocationUpdates(
                 LocationManager.GPS_PROVIDER,
@@ -35,14 +33,13 @@ public class GpsLocationProvider implements LocationProvider, LocationListener {
                 this);
     }
 
-    @Override
     public void stop() {
         mLocationManager.removeUpdates(this);
     }
 
     @Override
     public void onLocationChanged(Location location) {
-        mLocationSubject.onNext(location);
+        mLocationSubject.onNext(new LocationInfo(location.getLatitude(), location.getLongitude()));
     }
 
     @Override

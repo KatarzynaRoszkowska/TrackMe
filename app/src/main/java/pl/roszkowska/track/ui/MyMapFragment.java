@@ -18,7 +18,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static pl.roszkowska.track.marker.State.MarkerEntity;
+import static pl.roszkowska.track.marker.MarkerState.MarkerEntity;
 
 public class MyMapFragment extends SupportMapFragment implements OnMapReadyCallback {
     private GoogleMap mMap; // TODO fix loading map async
@@ -29,7 +29,14 @@ public class MyMapFragment extends SupportMapFragment implements OnMapReadyCallb
     @Override
     public void onCreate(Bundle bundle) {
         super.onCreate(bundle);
-        getMapAsync(this);
+    }
+
+    @Override
+    public void getMapAsync(OnMapReadyCallback onMapReadyCallback) {
+        super.getMapAsync(googleMap -> {
+            onMapReadyCallback.onMapReady(googleMap);
+            MyMapFragment.this.onMapReady(googleMap);
+        });
     }
 
     @Override

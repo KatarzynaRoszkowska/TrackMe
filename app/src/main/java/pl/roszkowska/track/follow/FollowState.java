@@ -2,17 +2,17 @@ package pl.roszkowska.track.follow;
 
 import java.util.LinkedList;
 
-public class State {
+public class FollowState {
     public long routeId;
     public boolean isFollowing;
     public boolean canShowHistogram;
     public LinkedList<Step> steps;
 
-    public State() {
+    public FollowState() {
         steps = new LinkedList<>();
     }
 
-    public State(State other) {
+    public FollowState(FollowState other) {
         routeId = other.routeId;
         isFollowing = other.isFollowing;
         steps = new LinkedList<>(other.steps);
@@ -20,7 +20,7 @@ public class State {
 
     @Override
     public String toString() {
-        return "State{" +
+        return "HistogramState{" +
                 "routeId=" + routeId +
                 ", isFollowing=" + isFollowing +
                 ", steps=" + steps +

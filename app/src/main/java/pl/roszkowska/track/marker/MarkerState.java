@@ -2,16 +2,16 @@ package pl.roszkowska.track.marker;
 
 import java.util.LinkedList;
 
-public class State {
+public class MarkerState {
 
     public final LinkedList<MarkerEntity> mMarkerOptionsList;
 
-    public State() {
+    public MarkerState() {
 
         mMarkerOptionsList = new LinkedList<>();
     }
 
-    public State(State other) {
+    public MarkerState(MarkerState other) {
         mMarkerOptionsList = new LinkedList<>(other.mMarkerOptionsList);
 
     }

@@ -5,11 +5,11 @@ import pl.roszkowska.track.common.Actor;
 import pl.roszkowska.track.common.Feature;
 import pl.roszkowska.track.common.StateReducer;
 
-public class HistogramFeature extends Feature<State, Event, Effect> {
-    public HistogramFeature(State initialState,
-                            Observable<Event> events,
-                            Actor<Event, State, Effect> actor,
-                            StateReducer<Effect, State> reducer) {
+public class HistogramFeature extends Feature<HistogramState, HistogramEvent, HistorgramEffect> {
+    public HistogramFeature(HistogramState initialState,
+                            Observable<HistogramEvent> events,
+                            Actor<HistogramEvent, HistogramState, HistorgramEffect> actor,
+                            StateReducer<HistorgramEffect, HistogramState> reducer) {
         super(initialState, events, actor, reducer);
     }
 }

@@ -4,7 +4,7 @@ import java.util.List;
 
 import io.reactivex.Observable;
 
-public interface Repository {
+public interface FollowRepository {
     Observable<Long> createNewFollowRoute();
 
     Observable<Long> savePosition(long routeId,

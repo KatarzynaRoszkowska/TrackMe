@@ -2,24 +2,24 @@ package pl.roszkowska.track.histogram;
 
 import io.reactivex.Observable;
 import pl.roszkowska.track.common.Actor;
-import pl.roszkowska.track.follow.Repository;
+import pl.roszkowska.track.follow.FollowRepository;
 
-public class HistogramActor implements Actor<Event, State, Effect> {
+public class HistogramActor implements Actor<HistogramEvent, HistogramState, HistorgramEffect> {
 
-    private final Repository mRepository;
+    private final FollowRepository mRepository;
 
-    public HistogramActor(Repository repository) {
+    public HistogramActor(FollowRepository repository) {
         mRepository = repository;
     }
 
     @Override
-    public Observable<Effect> act(State state, Event event) {
-        if (event instanceof Event.ReadRoute) {
-            Event.ReadRoute readRoute = (Event.ReadRoute) event;
+    public Observable<HistorgramEffect> act(HistogramState state, HistogramEvent event) {
+        if (event instanceof HistogramEvent.ReadRoute) {
+            HistogramEvent.ReadRoute readRoute = (HistogramEvent.ReadRoute) event;
             return mRepository
                     .getAllSteps(readRoute.routeId)
-                    .map(Effect.StepsArrived::new)
-                    .cast(Effect.class);
+                    .map(HistorgramEffect.StepsArrived::new)
+                    .cast(HistorgramEffect.class);
         }
         throw new IllegalStateException();
     }

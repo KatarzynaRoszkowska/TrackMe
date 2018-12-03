@@ -1,7 +1,7 @@
 package pl.roszkowska.track.follow;
 
-public interface Effect {
-    class StartedFollowing implements Effect {
+public interface FollowEffect {
+    class StartedFollowing implements FollowEffect {
         public final long id;
 
         public StartedFollowing(long id) {
@@ -9,10 +9,10 @@ public interface Effect {
         }
     }
 
-    class StoppedFollowing implements Effect {
+    class StoppedFollowing implements FollowEffect {
     }
 
-    class NewStep implements Effect {
+    class NewStep implements FollowEffect {
 
         public final double lat;
         public final double lon;

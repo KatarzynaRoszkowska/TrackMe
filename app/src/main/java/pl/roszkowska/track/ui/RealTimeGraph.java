@@ -2,36 +2,30 @@ package pl.roszkowska.track.ui;
 
 import android.graphics.Color;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 
 import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.GridLabelRenderer;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 
-import java.util.Random;
-
 import io.reactivex.disposables.CompositeDisposable;
 import pl.roszkowska.track.R;
-import pl.roszkowska.track.TrackModule;
 import pl.roszkowska.track.common.EventDispatcher;
-import pl.roszkowska.track.histogram.Event;
 import pl.roszkowska.track.histogram.HistogramActor;
+import pl.roszkowska.track.histogram.HistogramEvent;
 import pl.roszkowska.track.histogram.HistogramFeature;
 import pl.roszkowska.track.histogram.HistogramReducer;
-import pl.roszkowska.track.histogram.State;
+import pl.roszkowska.track.histogram.HistogramState;
+import pl.roszkowska.track.module.RepositoryModule;
+import pl.roszkowska.track.module.TrackModule;
 
 
 public class RealTimeGraph extends AppCompatActivity {
 
-    private Handler mHandler = new Handler();
     LineGraphSeries<DataPoint> series;
-    private double lastXPoint = 2;
-    private Random random = new Random();
 
-    private EventDispatcher mEventDispatcher = TrackModule.getModule().getEventDispatcher();
+    private EventDispatcher mEventDispatcher = TrackModule.getEventDispatcher();
     private HistogramFeature mHistogramFeature;
     private CompositeDisposable mCompositeDisposable = new CompositeDisposable();
 
@@ -40,7 +34,7 @@ public class RealTimeGraph extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.graph);
         long routeId = getIntent().getExtras().getLong("routeId");
-        GraphView graph = (GraphView) findViewById(R.id.graph);
+        GraphView graph = findViewById(R.id.graph);
         series = new LineGraphSeries<>(new DataPoint[]{
                 new DataPoint(0, 1)
 
@@ -56,23 +50,23 @@ public class RealTimeGraph extends AppCompatActivity {
         gridLabel.setHorizontalAxisTitle("t [s]");
         gridLabel.setVerticalAxisTitle("s [m]");
 
-        addMyPoint();
+        mHistogramFeature = new HistogramFeature(new HistogramState(),
+                mEventDispatcher.ofType(HistogramEvent.class),
+                new HistogramActor(RepositoryModule.getModule().getFollowRepository()),
+                new HistogramReducer()
+        );
 
-//        mHistogramFeature = new HistogramFeature(new State(),
-//                mEventDispatcher.ofType(Event.class),
-//                new HistogramActor(TrackModule.getModule().getFollowRepository()),
-//                new HistogramReducer()
-//        );
-//
-//        mCompositeDisposable.add(
-//                mHistogramFeature.states.subscribe(state -> {
-//                    for (State.Step step : state.steps) {
-//                        Log.w("HIST", "Distance: " + step.distance + " time: " + step.time);
-//                    }
-//                })
-//        );
+        mCompositeDisposable.add(
+                mHistogramFeature.states.subscribe(state -> {
+                    for (HistogramState.Step step : state.steps) {
+                        //Log.w("HIST", "Distance: " + step.distance + " time: " + step.time);
+                        series.appendData(new DataPoint(step.time, step.distance), false, 100);
+                    }
+                })
+        );
 
-        mEventDispatcher.sendEvent(new Event.ReadRoute(routeId));
+        //mEventDispatcher.ofType(pl.roszkowska.track.follow.LocationEvent.NewStep)
+        mEventDispatcher.sendEvent(new HistogramEvent.ReadRoute(routeId));
     }
 
     @Override
@@ -81,32 +75,6 @@ public class RealTimeGraph extends AppCompatActivity {
         mCompositeDisposable.clear();
     }
 
-    private void addMyPoint() {
-        mHandler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                mHistogramFeature = new HistogramFeature(new State(),
-                        mEventDispatcher.ofType(Event.class),
-                        new HistogramActor(TrackModule.getModule().getFollowRepository()),
-                        new HistogramReducer()
-                );
-
-                mCompositeDisposable.add(
-                        mHistogramFeature.states.subscribe(state -> {
-                            for (State.Step step : state.steps) {
-                                //Log.w("HIST", "Distance: " + step.distance + " time: " + step.time);
-                                series.appendData(new DataPoint(step.time, step.distance), false, 100);
-                            }
-                        })
-                );
-
-                //lastXPoint++;
-                //series.appendData(new DataPoint(lastXPoint, random.nextInt(10)), false, 100);
-
-                addMyPoint();
-            }
-        }, 1000);
-    }
 }
 
 

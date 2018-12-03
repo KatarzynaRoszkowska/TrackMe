@@ -1,8 +1,8 @@
 package pl.roszkowska.track.histogram;
 
-public interface Event {
+public interface HistogramEvent {
 
-    class ReadRoute implements Event {
+    class ReadRoute implements HistogramEvent {
         final long routeId;
 
         public ReadRoute(long routeId) {

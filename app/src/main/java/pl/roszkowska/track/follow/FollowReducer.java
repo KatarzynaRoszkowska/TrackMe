@@ -1,21 +1,21 @@
 package pl.roszkowska.track.follow;
 
 import pl.roszkowska.track.common.StateReducer;
-import pl.roszkowska.track.follow.State.Step;
+import pl.roszkowska.track.follow.FollowState.Step;
 
-public class FollowReducer implements StateReducer<Effect, State> {
+public class FollowReducer implements StateReducer<FollowEffect, FollowState> {
 
     @Override
-    public State reduce(State state, Effect effect) {
-        State outState = new State(state);
-        if (effect instanceof Effect.StartedFollowing) {
-            outState.routeId = ((Effect.StartedFollowing) effect).id;
+    public FollowState reduce(FollowState state, FollowEffect effect) {
+        FollowState outState = new FollowState(state);
+        if (effect instanceof FollowEffect.StartedFollowing) {
+            outState.routeId = ((FollowEffect.StartedFollowing) effect).id;
             outState.isFollowing = true;
-        } else if (effect instanceof Effect.StoppedFollowing) {
+        } else if (effect instanceof FollowEffect.StoppedFollowing) {
             outState.isFollowing = false;
-        } else if (effect instanceof Effect.NewStep) {
+        } else if (effect instanceof FollowEffect.NewStep) {
             if (outState.isFollowing) {
-                Effect.NewStep stepEvent = (Effect.NewStep) effect;
+                FollowEffect.NewStep stepEvent = (FollowEffect.NewStep) effect;
                 outState.steps.add(new Step(stepEvent.lat,
                         stepEvent.lon,
                         stepEvent.timestamp,

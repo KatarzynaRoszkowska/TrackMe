@@ -4,34 +4,53 @@ import android.location.Location;
 
 import io.reactivex.Observable;
 import pl.roszkowska.track.common.Actor;
+import pl.roszkowska.track.location.GpsLocationStream;
 
-public class FollowActor implements Actor<Event, State, Effect> {
+public class FollowActor implements Actor<FollowEvent, FollowState, FollowEffect> {
 
-    private final Repository mRepository;
+    private final FollowRepository mRepository;
+    private final GpsLocationStream mLocationStream;
 
-    public FollowActor(Repository repository) {
+    public FollowActor(FollowRepository repository, GpsLocationStream locationStream) {
         this.mRepository = repository;
+        mLocationStream = locationStream;
     }
 
     @Override
-    public Observable<Effect> act(State state, Event event) {
-        if (event instanceof Event.StartFollowing) {
-            return mRepository
-                    .createNewFollowRoute()
-                    .map(Effect.StartedFollowing::new)
-                    .cast(Effect.class);
-        } else if (event instanceof Event.NewStep) {
-            Event.NewStep e = (Event.NewStep) event;
-
-            return calculateDistance(state.routeId, e.lat, e.lon)
-                    .flatMap(distance -> savePosition(state.routeId, e, distance));
-        } else if (event instanceof Event.StopFollowing) {
-            return Observable.just(new Effect.StoppedFollowing());
+    public Observable<FollowEffect> act(FollowState state, FollowEvent event) {
+        if (event instanceof FollowEvent.StartFollowing) {
+            return Observable.merge(
+                    startEffect(),
+                    listenToStepsEffect(state.routeId));
+        } else if (event instanceof FollowEvent.StopFollowing) {
+            return Observable.just(new FollowEffect.StoppedFollowing());
         }
         throw new IllegalStateException("Unknown event");
     }
 
-    private Observable<Long> calculateDistance(long routeId, double lat, double lon) {
+    private Observable<FollowEffect> listenToStepsEffect(long routeId) {
+        return mLocationStream
+                .locationStream()
+                .flatMap(locationInfo -> createStep(routeId, locationInfo.lat, locationInfo.lon))
+                .flatMap(stepEffect -> mRepository.savePosition(
+                        routeId,
+                        stepEffect.lat,
+                        stepEffect.lon,
+                        stepEffect.timestamp,
+                        stepEffect.distance)
+                        .map(aLong -> stepEffect)
+                )
+                .doOnSubscribe(disposable -> mLocationStream.start())
+                .cast(FollowEffect.class);
+    }
+
+    private Observable<FollowEffect.StartedFollowing> startEffect() {
+        return mRepository
+                .createNewFollowRoute()
+                .map(FollowEffect.StartedFollowing::new);
+    }
+
+    private Observable<FollowEffect.NewStep> createStep(long routeId, double lat, double lon) {
         return mRepository
                 .getLastStep(routeId)
                 .map(stepInfo -> {
@@ -45,20 +64,8 @@ public class FollowActor implements Actor<Event, State, Effect> {
                     location2.setLongitude(stepInfo.lon);
 
                     return (long) location.distanceTo(location2);
-                }).cast(Long.class);
-    }
-
-    private Observable<Effect> savePosition(long routeId, Event.NewStep e, long distanceFromLastStep) {
-        return mRepository
-                .savePosition(routeId,
-                        e.lat,
-                        e.lon,
-                        e.timestamp,
-                        distanceFromLastStep)
-                .map(integer -> new Effect.NewStep(e.lat,
-                        e.lon,
-                        distanceFromLastStep,
-                        e.timestamp));
+                })
+                .map(distance -> new FollowEffect.NewStep(lat, lon, distance, System.currentTimeMillis()));
     }
 }
 

@@ -6,12 +6,12 @@ import java.util.List;
 
 import io.reactivex.Observable;
 import io.reactivex.schedulers.Schedulers;
-import pl.roszkowska.track.follow.Repository;
+import pl.roszkowska.track.follow.FollowRepository;
 
-public class FollowRepository implements Repository {
+public class FollowRepositoryRoom implements FollowRepository {
     private final TrackDatabase mTrackDatabase;
 
-    public FollowRepository(TrackDatabase trackDatabase) {
+    public FollowRepositoryRoom(TrackDatabase trackDatabase) {
         mTrackDatabase = trackDatabase;
     }
 

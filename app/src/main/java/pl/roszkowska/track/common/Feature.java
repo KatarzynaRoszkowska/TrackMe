@@ -14,13 +14,9 @@ public class Feature<State, Event, Effect> {
                    StateReducer<Effect, State> reducer) {
         lastState = initialState;
         states = events
-                .flatMap(event -> {
-                    return actor.act(lastState, event);
-                })
+                .flatMap(event -> actor.act(lastState, event))
                 .observeOn(AndroidSchedulers.mainThread())
-                .scan(initialState, (state, effect) -> {
-                    return lastState = reducer.reduce(state, effect);
-                })
+                .scan(initialState, (state, effect) -> lastState = reducer.reduce(state, effect))
                 .replay(1)
                 .autoConnect(0);
     }

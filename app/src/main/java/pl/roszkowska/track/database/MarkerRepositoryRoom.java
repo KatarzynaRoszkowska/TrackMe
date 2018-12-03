@@ -2,12 +2,12 @@ package pl.roszkowska.track.database;
 
 import io.reactivex.Observable;
 import io.reactivex.schedulers.Schedulers;
-import pl.roszkowska.track.marker.Repository;
+import pl.roszkowska.track.marker.MarkerRepository;
 
-public class MarkerRepository implements Repository {
+public class MarkerRepositoryRoom implements MarkerRepository {
     private final TrackDatabase mTrackDatabase;
 
-    public MarkerRepository(TrackDatabase trackDatabase) {
+    public MarkerRepositoryRoom(TrackDatabase trackDatabase) {
         this.mTrackDatabase = trackDatabase;
     }
 
