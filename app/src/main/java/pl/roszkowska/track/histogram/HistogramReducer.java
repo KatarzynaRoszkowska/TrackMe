@@ -11,7 +11,7 @@ public class HistogramReducer implements StateReducer<HistorgramEffect, Histogra
     public HistogramState reduce(HistogramState state, HistorgramEffect effect) {
         if (effect instanceof HistorgramEffect.StepsArrived) {
             List<FollowRepository.StepInfo> steps = ((HistorgramEffect.StepsArrived) effect).steps;
-            if (steps.isEmpty()) return state;
+            if (steps.size() <= 1) return state;
 
             List<HistogramState.Step> outSteps = new ArrayList<>();
             long lastTimeStamp = steps.get(0).timestamp;
@@ -22,7 +22,7 @@ public class HistogramReducer implements StateReducer<HistorgramEffect, Histogra
                 progressTime += info.timestamp - lastTimeStamp;
                 lastTimeStamp = info.timestamp;
 
-                outSteps.add(new HistogramState.Step(progressTime / 1000, progressDistance));
+                outSteps.add(new HistogramState.Step(info.id, progressTime / 1000, progressDistance));
             }
             HistogramState outState = new HistogramState();
             outState.steps = outSteps;

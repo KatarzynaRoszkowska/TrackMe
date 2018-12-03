@@ -18,12 +18,14 @@ public interface FollowRepository {
     Observable<List<StepInfo>> getAllSteps(long routeId);
 
     class StepInfo {
+        public final long id;
         public final double lat;
         public final double lon;
         public final long timestamp;
         public final double distance;
 
-        public StepInfo(double lat, double lon, long timestamp, double distance) {
+        public StepInfo(long id, double lat, double lon, long timestamp, double distance) {
+            this.id = id;
             this.lat = lat;
             this.lon = lon;
             this.timestamp = timestamp;
@@ -31,7 +33,7 @@ public interface FollowRepository {
         }
 
         public StepInfo() {
-            this(-1, -1, -1, -1);
+            this(-1, -1, -1, -1, -1);
         }
     }
 }

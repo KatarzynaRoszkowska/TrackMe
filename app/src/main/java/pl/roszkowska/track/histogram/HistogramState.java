@@ -8,10 +8,12 @@ public class HistogramState {
     public List<Step> steps = new ArrayList<>();
 
     public static class Step {
+        public final long id;
         public final long time;
         public final long distance;
 
-        public Step(long time, long distance) {
+        public Step(long id, long time, long distance) {
+            this.id = id;
             this.time = time;
             this.distance = distance;
         }

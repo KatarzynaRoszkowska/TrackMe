@@ -29,6 +29,8 @@ public class RealTimeGraph extends AppCompatActivity {
     private EventDispatcher mEventDispatcher = TrackModule.getEventDispatcher();
     private CompositeDisposable mDisposable = new CompositeDisposable();
     private GraphView mGraph;
+    private long mLastStepId = -1;
+    private LineGraphSeries<DataPoint> mSeries;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,9 +38,11 @@ public class RealTimeGraph extends AppCompatActivity {
         setContentView(R.layout.graph);
         long routeId = getIntent().getExtras().getLong(ROUTE_ID);
         mGraph = findViewById(R.id.graph);
-        mGraph.getViewport().setMinX(0);
+//        mGraph.getViewport().setMinX(0);
         mGraph.getViewport().setScalable(true);
+        mGraph.getViewport().setScalableY(true);
         mGraph.getViewport().setScrollable(true);
+        mGraph.getViewport().setScrollableY(true);
         GridLabelRenderer gridLabel = mGraph.getGridLabelRenderer();
         gridLabel.setHorizontalAxisTitle("t [s]");
         gridLabel.setVerticalAxisTitle("s [m]");
@@ -51,17 +55,25 @@ public class RealTimeGraph extends AppCompatActivity {
     }
 
     private void updateUi(HistogramState state) {
-        mGraph.removeAllSeries();
-        LineGraphSeries<DataPoint> series = new LineGraphSeries<>(new DataPoint[]{
-                new DataPoint(0, 1)
-
-        });
-        series.setColor(Color.RED);
-        for (HistogramState.Step step : state.steps) {
-            series.appendData(new DataPoint(step.time, step.distance), false, 100);
+        if (state.steps.isEmpty()) return;
+        if (mLastStepId == -1) {
+            mSeries = new LineGraphSeries<>();
+            mSeries.setColor(Color.RED);
+            mGraph.addSeries(mSeries);
         }
-        mGraph.addSeries(series);
+        for (HistogramState.Step step : state.steps) {
+            if (mLastStepId < step.id)
+                mSeries.appendData(new DataPoint(
+                                step.time,
+                                step.distance),
+                        false,
+                        100
+                );
+        }
+        mLastStepId = state.steps.get(state.steps.size() - 1).id;
         mGraph.getViewport().scrollToEnd();
+        mGraph.getViewport().setMinX(mGraph.getViewport().getMinX(true));
+        mGraph.getViewport().setMaxX(mGraph.getViewport().getMaxX(true));
     }
 
     @Override

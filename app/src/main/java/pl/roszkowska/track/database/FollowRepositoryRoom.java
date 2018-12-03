@@ -57,7 +57,13 @@ public class FollowRepositoryRoom implements FollowRepository {
         return Observable.create(emitter -> {
             StepEntity lastStep = mTrackDatabase.daoStep().getLastStep(routeId);
             if (lastStep != null) {
-                emitter.onNext(new StepInfo(lastStep.lat, lastStep.lon, lastStep.timestamp, lastStep.distanceBetweenLastStep));
+                emitter.onNext(new StepInfo(
+                        lastStep.stepId,
+                        lastStep.lat,
+                        lastStep.lon,
+                        lastStep.timestamp,
+                        lastStep.distanceBetweenLastStep)
+                );
             } else {
                 emitter.onNext(new StepInfo()); // blank
             }
@@ -73,7 +79,9 @@ public class FollowRepositoryRoom implements FollowRepository {
             List<StepEntity> steps = mTrackDatabase.daoStep().getRouteSteps(routeId);
 
             for (StepEntity entity : steps) {
-                emitter.onNext(new StepInfo(entity.lat,
+                emitter.onNext(new StepInfo(
+                        entity.stepId,
+                        entity.lat,
                         entity.lon,
                         entity.timestamp,
                         entity.distanceBetweenLastStep)
