@@ -8,4 +8,21 @@ public class RouteEntity {
     @PrimaryKey(autoGenerate = true)
     long routeId;
     String name;
+
+    public long getRouteId() {
+        return routeId;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public RouteEntity(long routeId, String name) {
+        this.routeId = routeId;
+        this.name = name;
+
+    }
+
+    public RouteEntity() {
+    }
 }

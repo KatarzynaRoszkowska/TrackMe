@@ -26,6 +26,7 @@ import pl.roszkowska.track.location.LocationProvider;
 import pl.roszkowska.track.marker.MarkerActor;
 import pl.roszkowska.track.marker.MarkerFeature;
 import pl.roszkowska.track.marker.MarkerReducer;
+import pl.roszkowska.track.statistics.StatisticsActivity;
 import pl.roszkowska.track.ui.MyMapFragment;
 import pl.roszkowska.track.ui.RealTimeGraph;
 
@@ -98,12 +99,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     location.getLatitude(),
                     location.getLongitude()));
         }, error -> Log.e("RX", "", error)));
-
-
-//        subscribe.add(mMarkerFeature.states.subscribe(state -> {
-//            if (state.mMarkerOptionsList.isEmpty()) return;
-//            mMyMapFragment.addMarker(state.mMarkerOptionsList);
-//        }));
     }
 
     private void markerDebugCode() {
@@ -118,38 +113,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             if (state.mMarkerOptionsList.isEmpty()) return;
             mMyMapFragment.addMarker(state.mMarkerOptionsList);
         }, error -> Log.e("RX", "", error)));
-
-
-     /*  MarkerActor markerActor = new MarkerActor(new pl.roszkowska.track.marker.Repository() {
-             int id = 0;
-
-            @Override
-            public int savePoint(String name, double lat, double lon) {
-                return id++;
-            }
-        }, mLocationProvider);
-
-        mMarkerFeature = new MarkerFeature(new pl.roszkowska.track.marker.State(),
-                eventDispatcher.ofType(pl.roszkowska.track.marker.Event.class),
-                markerActor,
-                new MarkerReducer());
-
-        eventDispatcher.sendEvent(new pl.roszkowska.track.marker.Event.MarkPoint("My new point"));
-
-        subscribe.add(Observable.just("My 2 Marker")
-                .delay(2000, TimeUnit.MILLISECONDS)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(s -> {
-                    eventDispatcher.sendEvent(new pl.roszkowska.track.marker.Event.MarkPoint(s));
-                }));
-
-        subscribe.add(Observable.just("My 3 Marker")
-                .delay(3000, TimeUnit.MILLISECONDS)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(s -> {
-                    eventDispatcher.sendEvent(new pl.roszkowska.track.marker.Event.MarkPoint(s));
-                }));
-                */
 
     }
 
@@ -183,7 +146,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
@@ -193,8 +155,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         int id = item.getItemId();
 
         if (id == R.id.graphItem) {
-            Intent intent1 = new Intent(this, RealTimeGraph.class);
-            this.startActivity(intent1);
+
+            subscribe.add(mFollowFeature.states.subscribe(state -> {
+                Intent intent = new Intent(this, RealTimeGraph.class);
+                intent.putExtra("routeId",state.routeId);
+                this.startActivity(intent);
+                    }));
+
             return true;
         }
 
@@ -207,6 +174,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         int id = item.getItemId();
 
         if (id == R.id.statistics) {
+            Intent statIntent = new Intent(this, StatisticsActivity.class);
+            this.startActivity(statIntent);
 
         } else if (id == R.id.myMarkers) {
 

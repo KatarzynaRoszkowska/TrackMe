@@ -31,14 +31,30 @@
         <activity
             android:name=".DrawMyRoute"
             android:label="draw my road" />
+        <activity
+            android:name=".statistics.StatisticsActivity"
+            android:label="Statystki">
+        <meta-data
+            android:name="android.support.PARENT_ACTIVITY"
+            android:value=".MainActivity" />
+        </activity>
 
         <uses-library
             android:name="org.apache.http.legacy"
             android:required="false" />
 
         <activity android:name=".ui.RealTimeGraph"
-            android:label="Wykres prędkości w czasie v(t)">
-
+            android:label="Przebyta droga"
+            >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity" />
+        </activity>
+        <activity android:name=".statistics.StatDetails"
+            android:label="Statystyki">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".statistics.StatisticsActivity" />
         </activity>
     </application>
 
