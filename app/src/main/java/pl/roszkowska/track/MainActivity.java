@@ -22,6 +22,7 @@ import pl.roszkowska.track.marker.MarkerState;
 import pl.roszkowska.track.module.TrackModule;
 import pl.roszkowska.track.statistics.StatisticsActivity;
 import pl.roszkowska.track.ui.MyMapFragment;
+import pl.roszkowska.track.ui.RealTimeGraph;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -33,6 +34,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private boolean isMapReady;
     private boolean isGraphItemActive;
     private boolean areWeFollowing;
+    private long lastRouteId = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,6 +97,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private void updateFollowUi(FollowState followState) {
         isGraphItemActive = followState.canShowHistogram;
         areWeFollowing = followState.isFollowing;
+        lastRouteId = followState.routeId;
         if (areWeFollowing) {
             mTrackMe.setImageResource(R.drawable.ic_baseline_stop_24px);
             mSetMarker.show();
@@ -130,15 +133,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         int id = item.getItemId();
 
         if (id == R.id.graphItem) {
-//            subscribe.add(mFollowFeature
-//                    .states
-//                    .firstOrError()
-//                    .subscribe(state -> {
-//                        Intent intent = new Intent(this, RealTimeGraph.class);
-//                        intent.putExtra("routeId", state.routeId);
-//                        this.startActivity(intent);
-//                    }));
-
+            Intent intent = new Intent(this, RealTimeGraph.class);
+            intent.putExtra(RealTimeGraph.ROUTE_ID, lastRouteId);
+            startActivity(intent);
             return true;
         }
 

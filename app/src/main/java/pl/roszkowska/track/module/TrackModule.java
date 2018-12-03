@@ -5,6 +5,7 @@ import android.content.Context;
 import io.reactivex.Observable;
 import pl.roszkowska.track.common.EventDispatcher;
 import pl.roszkowska.track.follow.FollowState;
+import pl.roszkowska.track.histogram.HistogramState;
 import pl.roszkowska.track.marker.MarkerState;
 
 public class TrackModule {
@@ -25,5 +26,9 @@ public class TrackModule {
 
     public static Observable<MarkerState> markerStateStream() {
         return FeatureModule.getModule().getMarkerFeature().states;
+    }
+
+    public static Observable<HistogramState> histogramStateStream() {
+        return FeatureModule.getModule().getHistogramFeature().states;
     }
 }
