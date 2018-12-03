@@ -11,8 +11,11 @@ public class FollowReducer implements StateReducer<FollowEffect, FollowState> {
         if (effect instanceof FollowEffect.StartedFollowing) {
             outState.routeId = ((FollowEffect.StartedFollowing) effect).id;
             outState.isFollowing = true;
+            outState.canShowHistogram = false;
         } else if (effect instanceof FollowEffect.StoppedFollowing) {
             outState.isFollowing = false;
+            outState.steps.clear();
+            outState.canShowHistogram = false;
         } else if (effect instanceof FollowEffect.NewStep) {
             if (outState.isFollowing) {
                 FollowEffect.NewStep stepEvent = (FollowEffect.NewStep) effect;
@@ -21,6 +24,7 @@ public class FollowReducer implements StateReducer<FollowEffect, FollowState> {
                         stepEvent.timestamp,
                         stepEvent.distance)
                 );
+                outState.canShowHistogram = true;
             }
         }
         return outState;

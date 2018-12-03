@@ -3,7 +3,7 @@ package pl.roszkowska.track.follow;
 import java.util.LinkedList;
 
 public class FollowState {
-    public long routeId;
+    public long routeId = -1;
     public boolean isFollowing;
     public boolean canShowHistogram;
     public LinkedList<Step> steps;

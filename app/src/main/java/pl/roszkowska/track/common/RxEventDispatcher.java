@@ -20,6 +20,6 @@ public class RxEventDispatcher implements EventDispatcher {
 
     @Override
     public <T> Observable<T> ofType(Class<T> classType) {
-        return eventObservable.ofType(classType);
+        return eventObservable.share().ofType(classType);
     }
 }

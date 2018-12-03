@@ -9,6 +9,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -16,6 +17,8 @@ import android.view.View;
 import io.reactivex.disposables.CompositeDisposable;
 import pl.roszkowska.track.follow.FollowEvent;
 import pl.roszkowska.track.follow.FollowState;
+import pl.roszkowska.track.marker.MarkerEvent;
+import pl.roszkowska.track.marker.MarkerState;
 import pl.roszkowska.track.module.TrackModule;
 import pl.roszkowska.track.statistics.StatisticsActivity;
 import pl.roszkowska.track.ui.MyMapFragment;
@@ -39,8 +42,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         setSupportActionBar(toolbar);
 
         mTrackMe = findViewById(R.id.trackMe);
-        mTrackMe.setOnClickListener(this::setupTrackMe);
+        mTrackMe.setOnClickListener(this::onTrackMeClicked);
         mSetMarker = findViewById(R.id.setMarker);
+        mSetMarker.setOnClickListener(this::onSetMarkerClicked);
 
         mMyMapFragment = (MyMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mMyMapFragment.getMapAsync(googleMap -> {
@@ -48,11 +52,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             subscribeFeatures();
         });
         subscribeFeatures();
-
-//        FloatingActionButton newMarker = findViewById(R.id.setMarker);
-//        newMarker.setOnClickListener(view -> TrackModule
-//                .getEventDispatcher()
-//                .sendEvent(new MarkerEvent.MarkPoint("Test")));
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this,
@@ -67,11 +66,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         navigationView.setNavigationItemSelectedListener(this);
     }
 
-    private void setupTrackMe(View v) {
+    private void onTrackMeClicked(View v) {
         FollowEvent event;
         if (!areWeFollowing) event = new FollowEvent.StartFollowing();
         else event = new FollowEvent.StopFollowing();
         TrackModule.getEventDispatcher().sendEvent(event);
+    }
+
+    private void onSetMarkerClicked(View v) {
+        TrackModule.getEventDispatcher().sendEvent(new MarkerEvent.MarkPoint("My Point"));
     }
 
     private void subscribeFeatures() {
@@ -79,10 +82,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         subscribe.add(TrackModule
                 .followStateStream()
-                .subscribe(this::updateUi));
+                .subscribe(this::updateFollowUi, this::onError));
+        subscribe.add(TrackModule
+                .markerStateStream()
+                .subscribe(this::updateMarkerUi, this::onError));
     }
 
-    private void updateUi(FollowState followState) {
+    private void onError(Throwable throwable) {
+        Log.e("ERR", "", throwable);
+    }
+
+    private void updateFollowUi(FollowState followState) {
         isGraphItemActive = followState.canShowHistogram;
         areWeFollowing = followState.isFollowing;
         if (areWeFollowing) {
@@ -92,7 +102,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             mTrackMe.setImageResource(R.drawable.ic_baseline_play_arrow_24px);
             mSetMarker.hide();
         }
+        if (!followState.steps.isEmpty()) {
+            FollowState.Step last = followState.steps.getLast();
+            mMyMapFragment.addNewStep(last.lat, last.lon);
+        }
         invalidateOptionsMenu();
+    }
+
+    private void updateMarkerUi(MarkerState markerState) {
+        mMyMapFragment.addMarker(markerState.mMarkerOptionsList);
     }
 
     @Override
@@ -125,60 +143,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    //    private void followDebugCode() {
-//        FollowActor followActor = new FollowActor(TrackModule.getModule().getFollowRepository());
-//
-//        mFollowFeature = new FollowFeature(new FollowState(),
-//                eventDispatcher.ofType(FollowEvent.class),
-//                followActor,
-//                new FollowReducer());
-//
-//        subscribe.add(mFollowFeature.states.subscribe(state -> {
-//            Log.w("RX", state.toString());
-//            if (state.steps.isEmpty()) return;
-//            FollowState.Step last = state.steps.getLast();
-//
-//
-//            Log.w("STEP", "Last step distance: " + last.distance);
-//
-//            mMyMapFragment.addNewStep(last.lat, last.lon);
-//        }, error -> Log.e("RX", "", error)));
-//
-//        eventDispatcher.sendEvent(new FollowEvent.StartFollowing());
-//
-//        subscribe.add(mLocationProvider.locationStream().subscribe(location -> {
-//            eventDispatcher.sendEvent(new FollowEvent.NewStep(
-//                    location.getLatitude(),
-//                    location.getLongitude()));
-//        }, error -> Log.e("RX", "", error)));
-//    }
-//
-//    private void markerDebugCode() {
-//        MarkerActor markerActor = new MarkerActor(TrackModule.getModule().getMarkerRepository(), mLocationProvider);
-//
-//        mMarkerFeature = new MarkerFeature(new MarkerState(),
-//                eventDispatcher.ofType(MarkerEvent.class),
-//                markerActor,
-//                new MarkerReducer());
-//
-//        subscribe.add(mMarkerFeature.states.subscribe(state -> {
-//            if (state.mMarkerOptionsList.isEmpty()) return;
-//            mMyMapFragment.addMarker(state.mMarkerOptionsList);
-//        }, error -> Log.e("RX", "", error)));
-//
-//    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        TrackModule.getEventDispatcher().sendEvent(new FollowEvent.StopFollowing());
     }
 
     @Override

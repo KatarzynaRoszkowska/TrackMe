@@ -5,6 +5,7 @@ import android.util.Log;
 import java.util.List;
 
 import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 import pl.roszkowska.track.follow.FollowRepository;
 
@@ -21,11 +22,11 @@ public class FollowRepositoryRoom implements FollowRepository {
             RouteEntity entity = new RouteEntity();
             entity.name = "Route 1";
             long id = mTrackDatabase.daoRoute().createRoute(entity);
-
             emitter.onNext(id);
             emitter.onComplete();
         }).cast(Long.class)
-                .subscribeOn(Schedulers.io());
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
     }
 
     @Override
@@ -35,7 +36,7 @@ public class FollowRepositoryRoom implements FollowRepository {
                                          long timestamp,
                                          long distanceFromLastStep) {
         return Observable.create(emitter -> {
-            Log.w("DB", "Saving " + routeId);
+            Log.w("DB", "Saving route id:" + routeId);
             StepEntity entity = new StepEntity();
             entity.routeId = routeId;
             entity.lat = lat;
@@ -43,19 +44,18 @@ public class FollowRepositoryRoom implements FollowRepository {
             entity.timestamp = timestamp;
             entity.distanceBetweenLastStep = distanceFromLastStep;
             long id = mTrackDatabase.daoStep().insertStep(entity);
-            Log.w("DB", "Saved " + routeId + " STEP: " + id);
+            Log.w("DB", "Saved " + routeId + " STEP: " + id + " lat: " + lat + " lon: " + lon + " timestamp: " + timestamp);
             emitter.onNext(id);
             emitter.onComplete();
         }).cast(Long.class)
-                .subscribeOn(Schedulers.io());
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
     }
 
     @Override
     public Observable<StepInfo> getLastStep(long routeId) {
         return Observable.create(emitter -> {
-            Log.w("DB", "Reading last route step " + routeId);
             StepEntity lastStep = mTrackDatabase.daoStep().getLastStep(routeId);
-            Log.w("DB", "Finish reading last route step " + routeId + " STEP: " + (lastStep == null ? "NULL" : lastStep.stepId));
             if (lastStep != null) {
                 emitter.onNext(new StepInfo(lastStep.lat, lastStep.lon, lastStep.timestamp, lastStep.distanceBetweenLastStep));
             } else {
@@ -63,7 +63,8 @@ public class FollowRepositoryRoom implements FollowRepository {
             }
             emitter.onComplete();
         }).cast(StepInfo.class)
-                .subscribeOn(Schedulers.io());
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
     }
 
     @Override
@@ -83,6 +84,7 @@ public class FollowRepositoryRoom implements FollowRepository {
         }).cast(StepInfo.class)
                 .toList()
                 .toObservable()
-                .subscribeOn(Schedulers.io());
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
     }
 }

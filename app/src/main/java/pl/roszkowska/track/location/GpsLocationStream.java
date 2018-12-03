@@ -21,7 +21,9 @@ public class GpsLocationStream implements LocationListener {
     }
 
     public Observable<LocationInfo> locationStream() {
-        return mLocationSubject;
+        return mLocationSubject
+                .distinctUntilChanged((info1, info2) -> info1.lon == info2.lon && info1.lat == info2.lat)
+                .share();
     }
 
     @SuppressLint("MissingPermission")

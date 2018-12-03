@@ -5,6 +5,7 @@ import android.content.Context;
 import io.reactivex.Observable;
 import pl.roszkowska.track.common.EventDispatcher;
 import pl.roszkowska.track.follow.FollowState;
+import pl.roszkowska.track.marker.MarkerState;
 
 public class TrackModule {
 
@@ -20,5 +21,9 @@ public class TrackModule {
 
     public static Observable<FollowState> followStateStream() {
         return FeatureModule.getModule().getFollowFeature().states;
+    }
+
+    public static Observable<MarkerState> markerStateStream() {
+        return FeatureModule.getModule().getMarkerFeature().states;
     }
 }
