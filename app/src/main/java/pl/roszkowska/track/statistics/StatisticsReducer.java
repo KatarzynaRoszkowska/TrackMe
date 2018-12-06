@@ -42,6 +42,6 @@ public class StatisticsReducer implements StateReducer<StatisticsEffect, Statist
     }
 
     private float calculateSpeed(long timeInMillis, long distanceInMeters) {
-        return (timeInMillis * 1000 / distanceInMeters) * 1000 / 3600;
+        return distanceInMeters / 1000F / timeInMillis * 1000F * 3600F;
     }
 }

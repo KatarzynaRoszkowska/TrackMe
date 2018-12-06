@@ -1,6 +1,7 @@
 package pl.roszkowska.track.ui;
 
 import android.graphics.Color;
+import android.util.Log;
 
 import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.GridLabelRenderer;
@@ -28,6 +29,7 @@ class GraphBinder {
     }
 
     public void bind(StatisticsState state) {
+        Log.d("TAGGAGAGAGAG", state.toString());
         if (state.steps.isEmpty()) return;
 
         LineGraphSeries series = new LineGraphSeries<>(convert(state.steps));

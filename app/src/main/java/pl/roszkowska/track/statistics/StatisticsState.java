@@ -21,4 +21,15 @@ public class StatisticsState {
             this.distance = distance;
         }
     }
+
+    @Override
+    public String toString() {
+        return "StatisticsState{" +
+                "trackLength=" + trackLength +
+                ", averageSpeed=" + averageSpeed +
+                ", maxSpeed=" + maxSpeed +
+                ", trackTime=" + trackTime +
+                ", steps=" + steps +
+                '}';
+    }
 }
