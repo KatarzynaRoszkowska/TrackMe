@@ -105,15 +105,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             mTrackMe.setImageResource(R.drawable.ic_baseline_play_arrow_24px);
             mSetMarker.hide();
         }
-        if (!followState.steps.isEmpty()) {
-            FollowState.Step last = followState.steps.getLast();
-            mMyMapFragment.addNewStep(last.lat, last.lon);
-        }
+        mMyMapFragment.setSteps(followState.steps);
         invalidateOptionsMenu();
     }
 
     private void updateMarkerUi(MarkerState markerState) {
-        mMyMapFragment.addMarker(markerState.mMarkerOptionsList);
+        mMyMapFragment.setMarkers(markerState.mMarkerOptionsList);
     }
 
     @Override
