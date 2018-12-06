@@ -13,10 +13,10 @@ import java.util.List;
 
 import pl.roszkowska.track.statistics.StatisticsState;
 
-class GraphBinder {
+public class GraphBinder {
     private final GraphView mGraphView;
 
-    GraphBinder(GraphView graphView) {
+    public GraphBinder(GraphView graphView) {
         mGraphView = graphView;
         mGraphView.getViewport().setScalable(true);
         mGraphView.getViewport().setScalableY(true);
@@ -29,7 +29,7 @@ class GraphBinder {
     }
 
     public void bind(StatisticsState state) {
-        Log.d("TAGGAGAGAGAG", state.toString());
+        Log.d("TAGAAZZZZ", state.toString());
         if (state.steps.isEmpty()) return;
 
         LineGraphSeries series = new LineGraphSeries<>(convert(state.steps));

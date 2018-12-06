@@ -2,9 +2,11 @@ package pl.roszkowska.track.database;
 
 import android.util.Log;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 import pl.roszkowska.track.follow.FollowRepository;
@@ -35,7 +37,7 @@ public class FollowRepositoryRoom implements FollowRepository {
                                          double lon,
                                          long timestamp,
                                          long distanceFromLastStep) {
-        return Observable.create(emitter -> {
+        return Observable.create((ObservableEmitter<Long> emitter) -> {
             Log.w("DB", "Saving route id:" + routeId);
             StepEntity entity = new StepEntity();
             entity.routeId = routeId;
@@ -47,7 +49,7 @@ public class FollowRepositoryRoom implements FollowRepository {
             Log.w("DB", "Saved " + routeId + " STEP: " + id + " lat: " + lat + " lon: " + lon + " timestamp: " + timestamp);
             emitter.onNext(id);
             emitter.onComplete();
-        }).cast(Long.class)
+        })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }
@@ -75,11 +77,12 @@ public class FollowRepositoryRoom implements FollowRepository {
 
     @Override
     public Observable<List<StepInfo>> getAllSteps(long routeId) {
-        return Observable.create(emitter -> {
+        return Observable.create((ObservableEmitter<List<StepInfo>> emitter) -> {
             List<StepEntity> steps = mTrackDatabase.daoStep().getRouteSteps(routeId);
 
+            List<StepInfo> stepInfos = new ArrayList<>();
             for (StepEntity entity : steps) {
-                emitter.onNext(new StepInfo(
+                stepInfos.add(new StepInfo(
                         entity.stepId,
                         entity.lat,
                         entity.lon,
@@ -87,11 +90,8 @@ public class FollowRepositoryRoom implements FollowRepository {
                         entity.distanceBetweenLastStep)
                 );
             }
-
-            emitter.onComplete();
-        }).cast(StepInfo.class)
-                .toList()
-                .toObservable()
+            emitter.onNext(stepInfos);
+        })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }

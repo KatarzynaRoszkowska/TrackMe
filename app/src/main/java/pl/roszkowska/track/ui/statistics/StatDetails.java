@@ -1,28 +1,35 @@
 package pl.roszkowska.track.ui.statistics;
 
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.TextView;
 
-import com.jjoe64.graphview.GraphView;
-import com.jjoe64.graphview.GridLabelRenderer;
-import com.jjoe64.graphview.series.DataPoint;
-import com.jjoe64.graphview.series.LineGraphSeries;
+import java.util.concurrent.TimeUnit;
 
+import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
 import pl.roszkowska.track.R;
+import pl.roszkowska.track.common.EventDispatcher;
+import pl.roszkowska.track.module.TrackModule;
+import pl.roszkowska.track.statistics.StatisticsEvent;
+import pl.roszkowska.track.statistics.StatisticsState;
+import pl.roszkowska.track.ui.GraphBinder;
 
 public class StatDetails extends AppCompatActivity {
     private TextView startTimeStamp, distance, time, avgSpeed, maxSpeed;
-    private String routeId;
-    LineGraphSeries<DataPoint> series;
+    private Long routeId;
+
+    private GraphBinder mGraphBinder;
+    private EventDispatcher mEventDispatcher = TrackModule.getEventDispatcher();
+    private CompositeDisposable mDisposable = new CompositeDisposable();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.statistic_view_details);
 
-        GraphView graph = findViewById(R.id.deailsGraph);
+        mGraphBinder = new GraphBinder(findViewById(R.id.deailsGraph));
 
         startTimeStamp = findViewById(R.id.detailsStartTimeStamp);
         distance = findViewById(R.id.detailsDistance);
@@ -36,27 +43,29 @@ public class StatDetails extends AppCompatActivity {
         avgSpeed.setText(getIntent().getExtras().getString("avgSpeed"));
         maxSpeed.setText(getIntent().getExtras().getString("maxSpeed"));
 
-        routeId = getIntent().getExtras().getString("routeID");
+        routeId = getIntent().getExtras().getLong("routeID");
+        routeId = 27L;
 
-        //TODO tutaj trzeba na podstawie przekazane RouteId pobrac wszystkie kroki
-        series = new LineGraphSeries<>(new DataPoint[]{
-                new DataPoint(0, 1),
-                new DataPoint(1,2),
-                new DataPoint(2,3)
+        mDisposable.add(TrackModule
+                .histogramStateStream()
+                .subscribe(this::update)
+        );
+        mDisposable.add(Observable
+                .interval(0, 1, TimeUnit.SECONDS, AndroidSchedulers.mainThread())
+                .subscribe(aLong -> mEventDispatcher.sendEvent(new StatisticsEvent.ReadRoute(routeId)))
+        );
+    }
 
-        });
-        series.setColor(Color.RED);
-        graph.addSeries(series);
-        graph.getViewport().setMinX(0);
-        graph.getViewport().setScalable(true);
-        graph.getViewport().setScrollable(true);
-        graph.getViewport().scrollToEnd();
-        GridLabelRenderer gridLabel = graph.getGridLabelRenderer();
-        gridLabel.setHorizontalAxisTitle("t [s]");
-        gridLabel.setVerticalAxisTitle("s [m]");
+    private void update(StatisticsState state) {
+        mGraphBinder.bind(state);
 
-        graph.addSeries(series);
+        avgSpeed.setText(String.valueOf(state.averageSpeed));
+    }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
 
+        mDisposable.clear();
     }
 }

@@ -35,13 +35,17 @@ public class FollowActor implements Actor<FollowEvent, FollowState, FollowEffect
     }
 
     private Observable<FollowEffect> stopFollowing() {
-        return Observable
-                .just(new FollowEffect.StoppedFollowing())
-                .cast(FollowEffect.class)
-                .doOnSubscribe(disposable -> {
-                    mLocationStream.stop();
-                    mStopSignal.onNext(true);
-                });
+        return automaticallyFollowSteps()
+                .firstOrError()
+                .toObservable()
+                .startWith(Observable
+                        .just(new FollowEffect.StoppedFollowing())
+                        .cast(FollowEffect.class)
+                        .doOnSubscribe(disposable -> {
+                            mLocationStream.stop();
+                            mStopSignal.onNext(true);
+                        })
+                );
     }
 
     private Observable<FollowEffect> startFollowing() {
