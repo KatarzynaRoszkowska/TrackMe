@@ -15,9 +15,15 @@ public class StatisticsReducer implements StateReducer<StatisticsEffect, Statist
 
             List<StatisticsState.Step> outSteps = new ArrayList<>();
             long lastTimeStamp = steps.get(0).timestamp;
-            long progressDistance = 0;
+            int progressDistance = 0;
             long progressTime = 0;
+            float maxSpeed = 0;
             for (FollowRepository.StepInfo info : steps) {
+                long deltaTime = info.timestamp - lastTimeStamp;
+                if (deltaTime > 0) {
+                    maxSpeed = Math.max(maxSpeed, calculateSpeed(deltaTime, info.distance));
+                }
+
                 progressDistance += info.distance;
                 progressTime += info.timestamp - lastTimeStamp;
                 lastTimeStamp = info.timestamp;
@@ -26,9 +32,16 @@ public class StatisticsReducer implements StateReducer<StatisticsEffect, Statist
             }
             StatisticsState outState = new StatisticsState();
             outState.steps = outSteps;
-            //outState.averageSpeedForRoute = (int) (progressDistance / 1000 / progressTime / 1000 / 3600);
+            outState.averageSpeed = calculateSpeed(progressTime, progressDistance);
+            outState.maxSpeed = maxSpeed;
+            outState.trackLength = progressDistance;
+            outState.trackTime = progressTime;
             return outState;
         }
         throw new IllegalStateException();
+    }
+
+    private float calculateSpeed(long timeInMillis, long distanceInMeters) {
+        return (timeInMillis * 1000 / distanceInMeters) * 1000 / 3600;
     }
 }

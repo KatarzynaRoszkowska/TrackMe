@@ -22,9 +22,9 @@ public interface FollowRepository {
         public final double lat;
         public final double lon;
         public final long timestamp;
-        public final double distance;
+        public final long distance;
 
-        public StepInfo(long id, double lat, double lon, long timestamp, double distance) {
+        public StepInfo(long id, double lat, double lon, long timestamp, long distance) {
             this.id = id;
             this.lat = lat;
             this.lon = lon;

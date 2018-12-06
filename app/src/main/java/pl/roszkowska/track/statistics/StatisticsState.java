@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class StatisticsState {
-    int dlugoscTrasy;
-    float sredniaPredkosc;
-    float maksymalnaPredkosc;
-    long czasRuchu;
+    int trackLength;
+    float averageSpeed;
+    float maxSpeed;
+    long trackTime;
     public List<Step> steps = new ArrayList<>();
 
     public static class Step {

@@ -11,5 +11,5 @@ public class StepEntity {
     double lat;
     double lon;
     long timestamp;
-    double distanceBetweenLastStep;
+    long distanceBetweenLastStep;
 }

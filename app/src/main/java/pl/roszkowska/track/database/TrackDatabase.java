@@ -9,7 +9,7 @@ import android.arch.persistence.room.RoomDatabase;
                 StepEntity.class,
                 MarkerEntity.class
         },
-        version = 4,
+        version = 5,
         exportSchema = false
 )
 public abstract class TrackDatabase extends RoomDatabase {
