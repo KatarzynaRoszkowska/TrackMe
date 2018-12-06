@@ -20,9 +20,9 @@ import pl.roszkowska.track.follow.FollowState;
 import pl.roszkowska.track.marker.MarkerEvent;
 import pl.roszkowska.track.marker.MarkerState;
 import pl.roszkowska.track.module.TrackModule;
-import pl.roszkowska.track.statistics.StatisticsActivity;
 import pl.roszkowska.track.ui.MyMapFragment;
 import pl.roszkowska.track.ui.RealTimeGraph;
+import pl.roszkowska.track.ui.statistics.StatisticsActivity;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 

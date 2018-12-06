@@ -1,4 +1,4 @@
-package pl.roszkowska.track.statistics;
+package pl.roszkowska.track.ui.statistics;
 
 import android.graphics.Color;
 import android.os.Bundle;
@@ -22,7 +22,7 @@ public class StatDetails extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.statistic_view_details);
 
-        GraphView graph = (GraphView) findViewById(R.id.deailsGraph);
+        GraphView graph = findViewById(R.id.deailsGraph);
 
         startTimeStamp = findViewById(R.id.detailsStartTimeStamp);
         distance = findViewById(R.id.detailsDistance);

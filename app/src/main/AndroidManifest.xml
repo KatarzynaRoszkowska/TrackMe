@@ -32,7 +32,7 @@
             android:name=".DrawMyRoute"
             android:label="draw my road" />
         <activity
-            android:name=".statistics.StatisticsActivity"
+            android:name=".ui.statistics.StatisticsActivity"
             android:label="Statystki">
         <meta-data
             android:name="android.support.PARENT_ACTIVITY"
@@ -50,11 +50,12 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
         </activity>
-        <activity android:name=".statistics.StatDetails"
+        <activity
+            android:name=".ui.statistics.StatDetails"
             android:label="Statystyki">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".statistics.StatisticsActivity" />
+                android:value=".ui.statistics.StatisticsActivity" />
         </activity>
     </application>
 

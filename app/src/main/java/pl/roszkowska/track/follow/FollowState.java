@@ -20,7 +20,7 @@ public class FollowState {
 
     @Override
     public String toString() {
-        return "HistogramState{" +
+        return "StatisticsState{" +
                 "routeId=" + routeId +
                 ", isFollowing=" + isFollowing +
                 ", steps=" + steps +

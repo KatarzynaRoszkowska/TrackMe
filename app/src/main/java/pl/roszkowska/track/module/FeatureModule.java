@@ -8,11 +8,6 @@ import pl.roszkowska.track.follow.FollowEvent;
 import pl.roszkowska.track.follow.FollowFeature;
 import pl.roszkowska.track.follow.FollowReducer;
 import pl.roszkowska.track.follow.FollowState;
-import pl.roszkowska.track.histogram.HistogramActor;
-import pl.roszkowska.track.histogram.HistogramEvent;
-import pl.roszkowska.track.histogram.HistogramFeature;
-import pl.roszkowska.track.histogram.HistogramReducer;
-import pl.roszkowska.track.histogram.HistogramState;
 import pl.roszkowska.track.location.GpsLocationStream;
 import pl.roszkowska.track.location.LocationActor;
 import pl.roszkowska.track.location.LocationEvent;
@@ -24,19 +19,24 @@ import pl.roszkowska.track.marker.MarkerEvent;
 import pl.roszkowska.track.marker.MarkerFeature;
 import pl.roszkowska.track.marker.MarkerReducer;
 import pl.roszkowska.track.marker.MarkerState;
+import pl.roszkowska.track.statistics.StatisticsActor;
+import pl.roszkowska.track.statistics.StatisticsEvent;
+import pl.roszkowska.track.statistics.StatisticsFeature;
+import pl.roszkowska.track.statistics.StatisticsReducer;
+import pl.roszkowska.track.statistics.StatisticsState;
 
 public class FeatureModule {
     private static FeatureModule sInstance;
 
-    private final HistogramFeature mHistogramFeature;
+    private final StatisticsFeature mStatisticsFeature;
     private final MarkerFeature mMarkerFeature;
     private final FollowFeature mFollowFeature;
     private final LocationFeature mLocationFeature;
 
-    private FeatureModule(HistogramFeature histogramFeature,
+    private FeatureModule(StatisticsFeature statisticsFeature,
                           MarkerFeature markerFeature,
                           FollowFeature followFeature, LocationFeature locationFeature) {
-        mHistogramFeature = histogramFeature;
+        mStatisticsFeature = statisticsFeature;
         mMarkerFeature = markerFeature;
         mFollowFeature = followFeature;
         mLocationFeature = locationFeature;
@@ -56,12 +56,12 @@ public class FeatureModule {
         );
     }
 
-    private static HistogramFeature createHistogramFeature(EventDispatcher eventDispatcher) {
-        return new HistogramFeature(
-                new HistogramState(),
-                eventDispatcher.ofType(HistogramEvent.class),
-                new HistogramActor(RepositoryModule.getModule().getFollowRepository()),
-                new HistogramReducer()
+    private static StatisticsFeature createHistogramFeature(EventDispatcher eventDispatcher) {
+        return new StatisticsFeature(
+                new StatisticsState(),
+                eventDispatcher.ofType(StatisticsEvent.class),
+                new StatisticsActor(RepositoryModule.getModule().getFollowRepository()),
+                new StatisticsReducer()
         );
     }
 
@@ -98,8 +98,8 @@ public class FeatureModule {
         );
     }
 
-    public HistogramFeature getHistogramFeature() {
-        return mHistogramFeature;
+    public StatisticsFeature getStatisticsFeature() {
+        return mStatisticsFeature;
     }
 
     public MarkerFeature getMarkerFeature() {

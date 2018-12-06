@@ -1,10 +1,13 @@
-package pl.roszkowska.track.histogram;
+package pl.roszkowska.track.statistics;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class HistogramState {
-    public int averageSpeedForRoute;
+public class StatisticsState {
+    int dlugoscTrasy;
+    float sredniaPredkosc;
+    float maksymalnaPredkosc;
+    long czasRuchu;
     public List<Step> steps = new ArrayList<>();
 
     public static class Step {

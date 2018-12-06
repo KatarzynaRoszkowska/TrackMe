@@ -1,4 +1,4 @@
-package pl.roszkowska.track.statistics;
+package pl.roszkowska.track.ui.statistics;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
