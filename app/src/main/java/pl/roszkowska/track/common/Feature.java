@@ -18,6 +18,6 @@ public class Feature<State, Event, Effect> {
                 .observeOn(AndroidSchedulers.mainThread())
                 .scan(initialState, (state, effect) -> lastState = reducer.reduce(state, effect))
                 .replay(1)
-                .autoConnect(0);
+                .autoConnect(0); // nie potrzeba subskrypcji aby stream dzialal
     }
 }

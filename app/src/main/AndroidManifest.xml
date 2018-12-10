@@ -34,18 +34,18 @@
         <activity
             android:name=".ui.statistics.StatisticsActivity"
             android:label="Statystki">
-        <meta-data
-            android:name="android.support.PARENT_ACTIVITY"
-            android:value=".MainActivity" />
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity" />
         </activity>
 
         <uses-library
             android:name="org.apache.http.legacy"
             android:required="false" />
 
-        <activity android:name=".ui.RealTimeGraph"
-            android:label="Przebyta droga"
-            >
+        <activity
+            android:name=".ui.RealTimeGraph"
+            android:label="Przebyta droga">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
@@ -57,6 +57,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".ui.statistics.StatisticsActivity" />
         </activity>
+        <activity android:name=".LearningRx"></activity>
     </application>
 
 </manifest>
