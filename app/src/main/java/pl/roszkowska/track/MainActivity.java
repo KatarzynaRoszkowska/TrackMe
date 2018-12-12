@@ -68,7 +68,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         navigationView.setNavigationItemSelectedListener(this);
 
 
-        startActivity(new Intent(this, LearningRx.class));
+        //startActivity(new Intent(this, LearningRx.class));
 
 //        subscribe.add(
 //                TrackModule

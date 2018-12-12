@@ -24,8 +24,8 @@ public class GraphBinder {
         mGraphView.getViewport().setScrollableY(true);
 
         GridLabelRenderer gridLabel = mGraphView.getGridLabelRenderer();
-        gridLabel.setHorizontalAxisTitle("t [s]");
-        gridLabel.setVerticalAxisTitle("s [m]");
+        gridLabel.setHorizontalAxisTitle("t [h]");
+        gridLabel.setVerticalAxisTitle("s [km]");
     }
 
     public void bind(StatisticsState state) {

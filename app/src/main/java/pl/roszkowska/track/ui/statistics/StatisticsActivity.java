@@ -38,7 +38,17 @@ public class StatisticsActivity extends AppCompatActivity{
 
         //TODO tutaj trzeba pobierac z repozytorium
         RouteEntity e  = new RouteEntity(1L,"pierwsza");
+        RouteEntity e2  = new RouteEntity(2L,"druga");
+        RouteEntity e3  = new RouteEntity(3L,"trzecia");
+        RouteEntity e4  = new RouteEntity(4L,"czwarta");
+        RouteEntity e5  = new RouteEntity(5L,"piąta");
+        RouteEntity e6  = new RouteEntity(6L,"szósta");
         routeEntityList.add(e);
+        routeEntityList.add(e2);
+        routeEntityList.add(e3);
+        routeEntityList.add(e4);
+        routeEntityList.add(e5);
+        routeEntityList.add(e6);
 
         statisticsAdapter = new StatisticsAdapter(this, routeEntityList);
 

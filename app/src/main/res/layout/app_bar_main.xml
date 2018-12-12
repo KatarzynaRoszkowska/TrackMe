@@ -26,21 +26,21 @@
         app:layout_anchorGravity="top|center" />
 
     <android.support.design.widget.FloatingActionButton
-        android:id="@+id/setMarker"
+        android:id="@+id/trackMe"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="300dp"
         android:layout_marginTop="520dp"
         android:clickable="true"
-        app:srcCompat="@drawable/ic_add_location_black_24dp" />
+        app:srcCompat="@drawable/ic_baseline_play_arrow_24px"/>
 
     <android.support.design.widget.FloatingActionButton
-        android:id="@+id/trackMe"
+        android:id="@+id/setMarker"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="240dp"
         android:layout_marginTop="520dp"
         android:clickable="true"
-        app:srcCompat="@drawable/ic_baseline_play_arrow_24px" />
+        app:srcCompat="@drawable/ic_add_location_black_24dp" />
 
 </android.support.design.widget.CoordinatorLayout>
