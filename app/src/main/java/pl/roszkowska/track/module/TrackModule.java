@@ -7,6 +7,7 @@ import pl.roszkowska.track.common.EventDispatcher;
 import pl.roszkowska.track.follow.FollowState;
 import pl.roszkowska.track.marker.MarkerState;
 import pl.roszkowska.track.statistics.StatisticsState;
+import pl.roszkowska.track.statistics.list.StatisticListState;
 
 public class TrackModule {
 
@@ -30,5 +31,9 @@ public class TrackModule {
 
     public static Observable<StatisticsState> histogramStateStream() {
         return FeatureModule.getModule().getStatisticsFeature().states;
+    }
+
+    public static Observable<StatisticListState> statisticListStateStream() {
+        return FeatureModule.getModule().getStatisticListFeature().states;
     }
 }

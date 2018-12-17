@@ -4,13 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import pl.roszkowska.track.common.StateReducer;
-import pl.roszkowska.track.follow.FollowRepository;
+import pl.roszkowska.track.follow.RouteRepository;
 
 public class StatisticsReducer implements StateReducer<StatisticsEffect, StatisticsState> {
     @Override
     public StatisticsState reduce(StatisticsState state, StatisticsEffect effect) {
         if (effect instanceof StatisticsEffect.StepsArrived) {
-            List<FollowRepository.StepInfo> steps = ((StatisticsEffect.StepsArrived) effect).steps;
+            List<RouteRepository.StepInfo> steps = ((StatisticsEffect.StepsArrived) effect).steps;
             if (steps.size() <= 1) return state;
 
             List<StatisticsState.Step> outSteps = new ArrayList<>();
@@ -18,7 +18,7 @@ public class StatisticsReducer implements StateReducer<StatisticsEffect, Statist
             int progressDistance = 0;
             long progressTime = 0;
             float maxSpeed = 0;
-            for (FollowRepository.StepInfo info : steps) {
+            for (RouteRepository.StepInfo info : steps) {
                 long deltaTime = info.timestamp - lastTimeStamp;
                 if (deltaTime > 0) {
                     maxSpeed = Math.max(maxSpeed, calculateSpeed(deltaTime, info.distance));

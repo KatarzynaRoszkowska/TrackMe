@@ -4,8 +4,8 @@ import java.util.List;
 
 import io.reactivex.Observable;
 
-public interface FollowRepository {
-    Observable<Long> createNewFollowRoute();
+public interface RouteRepository {
+    Observable<Long> createNewRoute();
 
     Observable<Long> savePosition(long routeId,
                                   double lat,
@@ -16,6 +16,20 @@ public interface FollowRepository {
     Observable<StepInfo> getLastStep(long routeId);
 
     Observable<List<StepInfo>> getAllSteps(long routeId);
+
+    Observable<List<RouteInfo>> getAllRoutes();
+
+    class RouteInfo {
+        public final long routeId;
+        public final long routeDuration;
+        public final long timestamp;
+
+        public RouteInfo(long routeId, long routeDuration, long timestamp) {
+            this.routeId = routeId;
+            this.routeDuration = routeDuration;
+            this.timestamp = timestamp;
+        }
+    }
 
     class StepInfo {
         public final long id;

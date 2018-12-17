@@ -2,13 +2,13 @@ package pl.roszkowska.track.statistics;
 
 import io.reactivex.Observable;
 import pl.roszkowska.track.common.Actor;
-import pl.roszkowska.track.follow.FollowRepository;
+import pl.roszkowska.track.follow.RouteRepository;
 
 public class StatisticsActor implements Actor<StatisticsEvent, StatisticsState, StatisticsEffect> {
 
-    private final FollowRepository mRepository;
+    private final RouteRepository mRepository;
 
-    public StatisticsActor(FollowRepository repository) {
+    public StatisticsActor(RouteRepository repository) {
         mRepository = repository;
     }
 

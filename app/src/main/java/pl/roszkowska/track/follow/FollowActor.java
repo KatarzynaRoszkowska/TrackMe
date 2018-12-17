@@ -14,12 +14,12 @@ import pl.roszkowska.track.location.LocationInfo;
 
 public class FollowActor implements Actor<FollowEvent, FollowState, FollowEffect> {
 
-    private final FollowRepository mRepository;
+    private final RouteRepository mRepository;
     private final GpsLocationStream mLocationStream;
     private Subject<Long> mRouteId = BehaviorSubject.create();
     private Subject<Boolean> mStopSignal = PublishSubject.create();
 
-    public FollowActor(FollowRepository repository, GpsLocationStream locationStream) {
+    public FollowActor(RouteRepository repository, GpsLocationStream locationStream) {
         this.mRepository = repository;
         mLocationStream = locationStream;
     }
@@ -56,7 +56,7 @@ public class FollowActor implements Actor<FollowEvent, FollowState, FollowEffect
 
     private Observable<FollowEffect> createNewRoute() {
         return mRepository
-                .createNewFollowRoute()
+                .createNewRoute()
                 .map(FollowEffect.StartedFollowing::new)
                 .doOnNext(startedFollowing -> mRouteId.onNext(startedFollowing.id))
                 .doOnSubscribe(disposable -> mLocationStream.start())

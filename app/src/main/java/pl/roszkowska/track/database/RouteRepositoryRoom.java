@@ -9,17 +9,17 @@ import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
-import pl.roszkowska.track.follow.FollowRepository;
+import pl.roszkowska.track.follow.RouteRepository;
 
-public class FollowRepositoryRoom implements FollowRepository {
+public class RouteRepositoryRoom implements RouteRepository {
     private final TrackDatabase mTrackDatabase;
 
-    public FollowRepositoryRoom(TrackDatabase trackDatabase) {
+    public RouteRepositoryRoom(TrackDatabase trackDatabase) {
         mTrackDatabase = trackDatabase;
     }
 
     @Override
-    public Observable<Long> createNewFollowRoute() {
+    public Observable<Long> createNewRoute() {
         return Observable.create(emitter -> {
             RouteEntity entity = new RouteEntity();
             entity.name = "Route 1";
@@ -94,5 +94,35 @@ public class FollowRepositoryRoom implements FollowRepository {
         })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
+    }
+
+    @Override
+    public Observable<List<RouteInfo>> getAllRoutes() {
+        return Observable.create((ObservableEmitter<List<RouteInfo>> emitter) ->
+                emitter.onNext(readRouteInfo())
+        )
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+    }
+
+    private List<RouteInfo> readRouteInfo() {
+        List<RouteInfo> routeInfoList = new ArrayList<>();
+        List<Long> routes = mTrackDatabase.daoRoute().getRouteIds();
+
+        for (Long routeId : routes) {
+            StepEntity firstStep = mTrackDatabase.daoStep().getFirstStep(routeId);
+            StepEntity lastStep = mTrackDatabase.daoStep().getLastStep(routeId);
+
+            if (firstStep == null || lastStep == null || firstStep.stepId == lastStep.stepId)
+                continue;
+
+            routeInfoList.add(new RouteInfo(
+                    routeId,
+                    lastStep.timestamp - firstStep.timestamp,
+                    firstStep.timestamp
+            ));
+        }
+
+        return routeInfoList;
     }
 }

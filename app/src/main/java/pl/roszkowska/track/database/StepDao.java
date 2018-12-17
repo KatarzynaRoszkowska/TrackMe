@@ -11,6 +11,9 @@ public interface StepDao {
     @Insert
     long insertStep(StepEntity stepEntity);
 
+    @Query("SELECT * FROM StepEntity WHERE routeId = :routeId ORDER BY stepId ASC LIMIT 1")
+    StepEntity getFirstStep(long routeId);
+
     @Query("SELECT * FROM StepEntity WHERE routeId = :routeId ORDER BY stepId DESC LIMIT 1")
     StepEntity getLastStep(long routeId);
 

@@ -3,24 +3,24 @@ package pl.roszkowska.track.module;
 import android.content.Context;
 
 import pl.roszkowska.track.database.DatabaseProvider;
-import pl.roszkowska.track.database.FollowRepositoryRoom;
 import pl.roszkowska.track.database.MarkerRepositoryRoom;
-import pl.roszkowska.track.follow.FollowRepository;
+import pl.roszkowska.track.database.RouteRepositoryRoom;
+import pl.roszkowska.track.follow.RouteRepository;
 import pl.roszkowska.track.marker.MarkerRepository;
 
 public class RepositoryModule {
     private static RepositoryModule sInstance;
 
     private final DatabaseProvider mDatabaseProvider;
-    private final FollowRepository mFollowRepository;
+    private final RouteRepository mRouteRepository;
     private final MarkerRepository mMarkerRepository;
 
 
     private RepositoryModule(DatabaseProvider databaseProvider,
-                             FollowRepository followRepository,
+                             RouteRepository routeRepository,
                              MarkerRepository markerRepository) {
         mDatabaseProvider = databaseProvider;
-        mFollowRepository = followRepository;
+        mRouteRepository = routeRepository;
         mMarkerRepository = markerRepository;
     }
 
@@ -30,7 +30,7 @@ public class RepositoryModule {
         }
         DatabaseProvider databaseProvider = new DatabaseProvider(context);
         sInstance = new RepositoryModule(databaseProvider,
-                new FollowRepositoryRoom(databaseProvider.getDatabase()),
+                new RouteRepositoryRoom(databaseProvider.getDatabase()),
                 new MarkerRepositoryRoom(databaseProvider.getDatabase()));
     }
 
@@ -38,8 +38,8 @@ public class RepositoryModule {
         return sInstance;
     }
 
-    public FollowRepository getFollowRepository() {
-        return mFollowRepository;
+    public RouteRepository getRouteRepository() {
+        return mRouteRepository;
     }
 
     public MarkerRepository getMarkerRepository() {
