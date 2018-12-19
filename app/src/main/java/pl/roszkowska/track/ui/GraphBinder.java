@@ -1,7 +1,6 @@
 package pl.roszkowska.track.ui;
 
 import android.graphics.Color;
-import android.util.Log;
 
 import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.GridLabelRenderer;
@@ -11,7 +10,8 @@ import com.jjoe64.graphview.series.LineGraphSeries;
 
 import java.util.List;
 
-import pl.roszkowska.track.statistics.StatisticsState;
+import pl.roszkowska.track.statistics.StatisticsState.RouteStatistics;
+import pl.roszkowska.track.statistics.StatisticsState.RouteStatistics.Step;
 
 public class GraphBinder {
     private final GraphView mGraphView;
@@ -28,8 +28,7 @@ public class GraphBinder {
         gridLabel.setVerticalAxisTitle("s [km]");
     }
 
-    public void bind(StatisticsState state) {
-        Log.d("TAGAAZZZZ", state.toString());
+    public void bind(RouteStatistics state) {
         if (state.steps.isEmpty()) return;
 
         LineGraphSeries series = new LineGraphSeries<>(convert(state.steps));
@@ -42,10 +41,10 @@ public class GraphBinder {
         mGraphView.getViewport().setMaxX(mGraphView.getViewport().getMaxX(true));
     }
 
-    private DataPointInterface[] convert(List<StatisticsState.Step> steps) {
+    private DataPointInterface[] convert(List<Step> steps) {
         DataPointInterface[] points = new DataPointInterface[steps.size()];
         for (int i = 0; i < steps.size(); i++) {
-            StatisticsState.Step step = steps.get(i);
+            Step step = steps.get(i);
             points[i] = new DataPoint(
                     step.time,
                     step.distance);

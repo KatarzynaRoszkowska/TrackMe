@@ -29,7 +29,7 @@ public class RealTimeGraph extends AppCompatActivity {
 
         GraphBinder graphBinder = new GraphBinder(findViewById(R.id.graph));
         mDisposable.add(TrackModule
-                .histogramStateStream()
+                .histogramStateStream(routeId)
                 .subscribe(graphBinder::bind)
         );
         mDisposable.add(Observable

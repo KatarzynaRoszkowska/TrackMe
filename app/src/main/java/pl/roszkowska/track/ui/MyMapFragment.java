@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 import pl.roszkowska.track.follow.FollowState;
+import pl.roszkowska.track.statistics.StatisticsState;
 
 import static pl.roszkowska.track.marker.MarkerState.MarkerEntity;
 
@@ -43,9 +44,9 @@ public class MyMapFragment extends SupportMapFragment implements OnMapReadyCallb
         mMap = googleMap;
     }
 
-    public void setSteps(List<FollowState.Step> steps) {
+    public void setSteps(List<LatLng> steps) {
         clearRoute();
-        mSteps = convert(steps);
+        mSteps = steps;
         if (steps.isEmpty()) return;
 
         updateMapViewSteps();
@@ -61,14 +62,6 @@ public class MyMapFragment extends SupportMapFragment implements OnMapReadyCallb
         mMap.moveCamera(CameraUpdateFactory.zoomTo(mMap.getMaxZoomLevel() - 5));
         LatLng lastLatLon = mSteps.get(mSteps.size() - 1);
         mMap.moveCamera(CameraUpdateFactory.newLatLng(lastLatLon));
-    }
-
-    private List<LatLng> convert(List<FollowState.Step> in) {
-        List<LatLng> latLng = new ArrayList<>();
-        for (FollowState.Step step : in) {
-            latLng.add(new LatLng(step.lat, step.lon));
-        }
-        return latLng;
     }
 
     public void setMarkers(List<MarkerEntity> markers) {
@@ -100,5 +93,21 @@ public class MyMapFragment extends SupportMapFragment implements OnMapReadyCallb
         mMap.clear();
         mMarkers.clear();
         mSteps.clear();
+    }
+
+    public static List<LatLng> convertFromFollowStateStep(List<FollowState.Step> in) {
+        List<LatLng> latLng = new ArrayList<>();
+        for (FollowState.Step step : in) {
+            latLng.add(new LatLng(step.lat, step.lon));
+        }
+        return latLng;
+    }
+
+    public static List<LatLng> convertFromStatisticsState(List<StatisticsState.RouteStatistics.Step> in) {
+        List<LatLng> latLng = new ArrayList<>();
+        for (StatisticsState.RouteStatistics.Step step : in) {
+            latLng.add(new LatLng(step.lat, step.lon));
+        }
+        return latLng;
     }
 }

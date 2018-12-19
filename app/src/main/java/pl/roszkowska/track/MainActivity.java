@@ -116,7 +116,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             mTrackMe.setImageResource(R.drawable.ic_baseline_play_arrow_24px);
             mSetMarker.hide();
         }
-        mMyMapFragment.setSteps(followState.steps);
+        mMyMapFragment.setSteps(MyMapFragment.convertFromFollowStateStep(followState.steps));
         invalidateOptionsMenu();
     }
 

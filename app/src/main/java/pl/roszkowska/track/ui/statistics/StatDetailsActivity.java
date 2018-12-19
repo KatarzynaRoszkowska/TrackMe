@@ -11,11 +11,12 @@ import java.util.concurrent.TimeUnit;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
 import pl.roszkowska.track.R;
 import pl.roszkowska.track.common.EventDispatcher;
 import pl.roszkowska.track.module.TrackModule;
 import pl.roszkowska.track.statistics.StatisticsEvent;
-import pl.roszkowska.track.statistics.StatisticsState;
+import pl.roszkowska.track.statistics.StatisticsState.RouteStatistics;
 import pl.roszkowska.track.ui.GraphBinder;
 
 public class StatDetailsActivity extends AppCompatActivity {
@@ -24,6 +25,7 @@ public class StatDetailsActivity extends AppCompatActivity {
     private GraphBinder mGraphBinder;
     private EventDispatcher mEventDispatcher = TrackModule.getEventDispatcher();
     private CompositeDisposable mDisposable = new CompositeDisposable();
+    private Disposable mUpdater;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,22 +43,40 @@ public class StatDetailsActivity extends AppCompatActivity {
         long routeId = IntentCreator.readRouteId(getIntent());
 
         mDisposable.add(TrackModule
-                .histogramStateStream()
+                .histogramStateStream(routeId)
                 .subscribe(this::update)
         );
-        mDisposable.add(Observable
-                .interval(0, 1, TimeUnit.SECONDS, AndroidSchedulers.mainThread())
-                .subscribe(aLong -> mEventDispatcher.sendEvent(new StatisticsEvent.ReadRoute(routeId)))
-        );
+
+
+        findViewById(R.id.detailsShowOnMap).setOnClickListener(v -> {
+            startActivity(MapRoutePreview.IntentHelper.create(this, routeId));
+        });
     }
 
-    private void update(StatisticsState state) {
+    @Override
+    protected void onResume() {
+        super.onResume();
+        long routeId = IntentCreator.readRouteId(getIntent());
+        if (mUpdater != null) mUpdater.dispose();
+        mUpdater = Observable
+                .interval(0, 1, TimeUnit.SECONDS, AndroidSchedulers.mainThread())
+                .subscribe(aLong -> mEventDispatcher.sendEvent(new StatisticsEvent.ReadRoute(routeId)));
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (mUpdater != null)
+            mUpdater.dispose(); // musimy zatrzymac kod aby nie updatewoal nam wiecznie jak odpalimy inne aktiwity z tego aktiwity
+    }
+
+    private void update(RouteStatistics state) {
         mGraphBinder.bind(state);
 
         avgSpeed.setText(String.valueOf(state.averageSpeed));
         startTimeStamp.setText(String.valueOf(state.trackTime));
         distance.setText(String.valueOf(state.trackLength));
-        time.setText(String.valueOf(state.trackTime));
+        time.setText(String.valueOf(state.trackTime / 1000) + "s");
         maxSpeed.setText(String.valueOf(state.maxSpeed));
     }
 
@@ -65,6 +85,7 @@ public class StatDetailsActivity extends AppCompatActivity {
         super.onDestroy();
 
         mDisposable.clear();
+        mUpdater.dispose();
     }
 
     public static class IntentCreator {

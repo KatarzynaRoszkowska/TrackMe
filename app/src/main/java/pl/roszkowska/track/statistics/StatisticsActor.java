@@ -1,5 +1,7 @@
 package pl.roszkowska.track.statistics;
 
+import java.util.List;
+
 import io.reactivex.Observable;
 import pl.roszkowska.track.common.Actor;
 import pl.roszkowska.track.follow.RouteRepository;
@@ -18,7 +20,7 @@ public class StatisticsActor implements Actor<StatisticsEvent, StatisticsState, 
             StatisticsEvent.ReadRoute readRoute = (StatisticsEvent.ReadRoute) event;
             return mRepository
                     .getAllSteps(readRoute.routeId)
-                    .map(StatisticsEffect.StepsArrived::new)
+                    .map((List<RouteRepository.StepInfo> steps) -> new StatisticsEffect.StepsArrived(readRoute.routeId, steps))
                     .cast(StatisticsEffect.class);
         }
         throw new IllegalStateException();

@@ -29,8 +29,13 @@ public class TrackModule {
         return FeatureModule.getModule().getMarkerFeature().states;
     }
 
-    public static Observable<StatisticsState> histogramStateStream() {
-        return FeatureModule.getModule().getStatisticsFeature().states;
+    public static Observable<StatisticsState.RouteStatistics> histogramStateStream(long routeId) {
+        return FeatureModule
+                .getModule()
+                .getStatisticsFeature()
+                .states
+                .flatMapIterable(s -> s.statistics.values()) // konwertuje List<RouteState> do RouteState stream
+                .filter(s -> s.routeId == routeId); // filtruje liste i zwracamy tylko RouteState ktory jest nasz
     }
 
     public static Observable<StatisticListState> statisticListStateStream() {
