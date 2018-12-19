@@ -8,7 +8,10 @@ public class MarkerReducer implements StateReducer<MarkerEffect, MarkerState> {
     public MarkerState reduce(MarkerState state, MarkerEffect effect) {
         MarkerState outState = new MarkerState(state);
 
-        if (effect instanceof MarkerEffect.MarkPoint) {
+        if (effect instanceof MarkerEffect.MarkersLoaded) {
+            outState.mMarkerOptionsList.clear();
+            outState.mMarkerOptionsList.addAll(((MarkerEffect.MarkersLoaded) effect).markPoints);
+        } else if (effect instanceof MarkerEffect.MarkPoint) {
             MarkerEffect.MarkPoint markerEffect = (MarkerEffect.MarkPoint) effect;
             MarkerEntity entity = new MarkerEntity(
                     markerEffect.id,

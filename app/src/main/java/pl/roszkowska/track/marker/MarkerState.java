@@ -1,18 +1,19 @@
 package pl.roszkowska.track.marker;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MarkerState {
 
-    public final LinkedList<MarkerEntity> mMarkerOptionsList;
+    public final List<MarkerEntity> mMarkerOptionsList;
 
     public MarkerState() {
 
-        mMarkerOptionsList = new LinkedList<>();
+        mMarkerOptionsList = new ArrayList<>();
     }
 
     public MarkerState(MarkerState other) {
-        mMarkerOptionsList = new LinkedList<>(other.mMarkerOptionsList);
+        mMarkerOptionsList = new ArrayList<>(other.mMarkerOptionsList);
 
     }
 

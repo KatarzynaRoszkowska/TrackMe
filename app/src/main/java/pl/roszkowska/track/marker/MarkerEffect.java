@@ -1,6 +1,16 @@
 package pl.roszkowska.track.marker;
 
+import java.util.List;
+
 public interface MarkerEffect {
+    class MarkersLoaded implements MarkerEffect {
+        final List<MarkerState.MarkerEntity> markPoints;
+
+        public MarkersLoaded(List<MarkerState.MarkerEntity> markPoints) {
+            this.markPoints = markPoints;
+        }
+    }
+
     class MarkPoint implements MarkerEffect {
         final long id;
         final String name;

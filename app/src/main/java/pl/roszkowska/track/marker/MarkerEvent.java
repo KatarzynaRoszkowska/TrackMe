@@ -1,6 +1,10 @@
 package pl.roszkowska.track.marker;
 
 public interface MarkerEvent {
+    class LoadMarkers implements MarkerEvent {
+
+    }
+
     class MarkPoint implements MarkerEvent {
         final String name;
 

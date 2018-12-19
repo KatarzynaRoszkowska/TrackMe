@@ -99,6 +99,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         subscribe.add(TrackModule
                 .markerStateStream()
                 .subscribe(this::updateMarkerUi, this::onError));
+
+        TrackModule.getEventDispatcher().sendEvent(new MarkerEvent.LoadMarkers());
     }
 
     private void onError(Throwable throwable) {

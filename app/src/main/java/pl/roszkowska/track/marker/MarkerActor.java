@@ -3,6 +3,9 @@ package pl.roszkowska.track.marker;
 import android.support.annotation.NonNull;
 import android.util.Pair;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import io.reactivex.Observable;
 import io.reactivex.schedulers.Schedulers;
 import pl.roszkowska.track.common.Actor;
@@ -21,12 +24,27 @@ public class MarkerActor implements Actor<MarkerEvent, MarkerState, MarkerEffect
     @Override
 
     public Observable<MarkerEffect> act(MarkerState state, MarkerEvent event) {
-        if (event instanceof MarkerEvent.MarkPoint) {
+        if (event instanceof MarkerEvent.LoadMarkers) {
+            return loadMarkers();
+        } else if (event instanceof MarkerEvent.MarkPoint) {
             return markPoint((MarkerEvent.MarkPoint) event);
         } else if (event instanceof MarkerEvent.RemovePoint) {
             return removePoint((MarkerEvent.RemovePoint) event);
         }
         throw new IllegalStateException("Unknown event");
+    }
+
+    private Observable<MarkerEffect> loadMarkers() {
+        return mRepository
+                .getAllMarkers()
+                .map(markerInfos -> {
+                    List<MarkerState.MarkerEntity> entityList = new ArrayList<>();
+                    for (MarkerRepository.MarkerInfo info : markerInfos) {
+                        entityList.add(new MarkerState.MarkerEntity(info.id, info.name, info.lat, info.lon));
+                    }
+                    return entityList;
+                })
+                .map(MarkerEffect.MarkersLoaded::new);
     }
 
     private Observable<MarkerEffect> removePoint(MarkerEvent.RemovePoint event) {
