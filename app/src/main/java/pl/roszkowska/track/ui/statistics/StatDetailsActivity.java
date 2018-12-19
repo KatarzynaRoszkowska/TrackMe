@@ -54,7 +54,10 @@ public class StatDetailsActivity extends AppCompatActivity {
         mGraphBinder.bind(state);
 
         avgSpeed.setText(String.valueOf(state.averageSpeed));
-        // todo finish here
+        startTimeStamp.setText(String.valueOf(state.trackTime));
+        distance.setText(String.valueOf(state.trackLength));
+        time.setText(String.valueOf(state.trackTime));
+        maxSpeed.setText(String.valueOf(state.maxSpeed));
     }
 
     @Override
