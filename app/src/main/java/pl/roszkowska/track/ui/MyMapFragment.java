@@ -2,6 +2,8 @@ package pl.roszkowska.track.ui;
 
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.AlertDialog;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -15,13 +17,21 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import pl.roszkowska.track.follow.FollowState;
 import pl.roszkowska.track.statistics.StatisticsState;
 
+import static android.Manifest.permission.ACCESS_FINE_LOCATION;
+import static android.support.v4.content.ContextCompat.checkSelfPermission;
+import static android.support.v4.content.PermissionChecker.PERMISSION_GRANTED;
 import static pl.roszkowska.track.marker.MarkerState.MarkerEntity;
 
 public class MyMapFragment extends SupportMapFragment implements OnMapReadyCallback {
+
+    private static final int MY_LOCATION_REQUEST_CODE = 455;
+    private static boolean showRationaleOnce;
+
     private GoogleMap mMap; // TODO fix loading map async
     private Map<Long, MarkerOptions> mMarkers = new HashMap<>();
     private List<LatLng> mSteps = new ArrayList<>();
@@ -29,6 +39,40 @@ public class MyMapFragment extends SupportMapFragment implements OnMapReadyCallb
     @Override
     public void onCreate(Bundle bundle) {
         super.onCreate(bundle);
+
+        checkLocationPermission();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        if (requestCode == MY_LOCATION_REQUEST_CODE) {
+            if (permissions.length == 1 &&
+                    permissions[0].equals(ACCESS_FINE_LOCATION) &&
+                    grantResults[0] != PERMISSION_GRANTED) {
+                if (!shouldShowRequestPermissionRationale(ACCESS_FINE_LOCATION)) {
+                    if (!showRationaleOnce) {
+                        showRationaleOnce = true;
+                        new AlertDialog.Builder(getActivity())
+                                .setMessage("Musisz recznie dac mi pozwolenie na lokalizacje, wejdz u stawienia")
+                                .show();
+                    }
+                } else {
+                    new AlertDialog.Builder(getActivity())
+                            .setMessage("Musze wiedziec gdzie idziesz aby ustalic trase!")
+                            .setOnDismissListener(dialog -> checkLocationPermission())
+                            .show();
+                }
+            }
+        }
+    }
+
+    public void checkLocationPermission() {
+        FragmentActivity activity = Objects.requireNonNull(this.getActivity());
+        if (checkSelfPermission(activity, ACCESS_FINE_LOCATION) == PERMISSION_GRANTED) return;
+        requestPermissions(
+                new String[]{ACCESS_FINE_LOCATION},
+                MY_LOCATION_REQUEST_CODE);
+
     }
 
     @Override
