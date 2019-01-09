@@ -24,6 +24,7 @@ import pl.roszkowska.track.marker.MarkerState;
 import pl.roszkowska.track.module.TrackModule;
 import pl.roszkowska.track.ui.MyMapFragment;
 import pl.roszkowska.track.ui.RealTimeGraph;
+import pl.roszkowska.track.ui.marker.MarkerListActivity;
 import pl.roszkowska.track.ui.statistics.list.StatisticsActivity;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
@@ -190,7 +191,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             this.startActivity(statIntent);
 
         } else if (id == R.id.myMarkers) {
-
+            startActivity(MarkerListActivity.IntentCreator.createIntent(this));
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

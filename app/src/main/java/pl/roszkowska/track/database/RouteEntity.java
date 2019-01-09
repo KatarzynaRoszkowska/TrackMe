@@ -16,13 +16,4 @@ public class RouteEntity {
     public String getName() {
         return name;
     }
-
-    public RouteEntity(long routeId, String name) {
-        this.routeId = routeId;
-        this.name = name;
-
-    }
-
-    public RouteEntity() {
-    }
 }

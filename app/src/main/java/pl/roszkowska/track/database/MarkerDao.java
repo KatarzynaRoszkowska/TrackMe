@@ -11,6 +11,6 @@ public interface MarkerDao {
     @Insert
     long savePoint(MarkerEntity markerEntity);
 
-    @Query("SELECT * FROM MarkerEntity")
+    @Query("SELECT * FROM MarkerEntity ORDER BY timestamp ASC")
     List<MarkerEntity> getMarkers();
 }
