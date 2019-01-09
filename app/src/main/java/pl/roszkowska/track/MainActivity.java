@@ -7,12 +7,14 @@ import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 
 import io.reactivex.disposables.CompositeDisposable;
 import pl.roszkowska.track.follow.FollowEvent;
@@ -87,7 +89,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void onSetMarkerClicked(View v) {
-        TrackModule.getEventDispatcher().sendEvent(new MarkerEvent.MarkPoint("My Point"));
+        new AlertDialog.Builder(this)
+                .setView(R.layout.dialog_marker_detials)
+                .setTitle("Podaj nazwe lokalizacji")
+                .setPositiveButton("OK", (dialog, which) -> {
+                    EditText textView = ((AlertDialog) dialog).findViewById(R.id.dialogMarkerDetails_markerName);
+                    TrackModule
+                            .getEventDispatcher()
+                            .sendEvent(new MarkerEvent.MarkPoint(textView.getText().toString()));
+                })
+                .show();
     }
 
     private void subscribeFeatures() {
