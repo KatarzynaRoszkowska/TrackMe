@@ -20,12 +20,12 @@ import java.util.Map;
 import java.util.Objects;
 
 import pl.roszkowska.track.follow.FollowState;
+import pl.roszkowska.track.marker.MarkerState;
 import pl.roszkowska.track.statistics.StatisticsState;
 
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 import static android.support.v4.content.ContextCompat.checkSelfPermission;
 import static android.support.v4.content.PermissionChecker.PERMISSION_GRANTED;
-import static pl.roszkowska.track.marker.MarkerState.MarkerEntity;
 
 public class MyMapFragment extends SupportMapFragment implements OnMapReadyCallback {
 
@@ -108,8 +108,8 @@ public class MyMapFragment extends SupportMapFragment implements OnMapReadyCallb
         mMap.moveCamera(CameraUpdateFactory.newLatLng(lastLatLon));
     }
 
-    public void setMarkers(List<MarkerEntity> markers) {
-        for (MarkerEntity marker : markers) {
+    public void setMarkers(List<MarkerState.MarkerItem> markers) {
+        for (MarkerState.MarkerItem marker : markers) {
             if (mMarkers.containsKey(marker.id)) continue;
             MarkerOptions markerOptions = new MarkerOptions();
             markerOptions.title(marker.name);

@@ -8,19 +8,25 @@ public interface MarkerRepository {
 
     Observable<List<MarkerInfo>> getAllMarkers();
 
-    Observable<Long> savePoint(String name, double lat, double lon);
+    Observable<Long> savePoint(MarkerInfo markerInfo);
 
     class MarkerInfo {
         public final String name;
         public final long id;
         public final double lat;
         public final double lon;
+        public final long timestamp;
 
-        public MarkerInfo(String name, long id, double lat, double lon) {
+        public MarkerInfo(String name, double lat, double lon, long timestamp) {
+            this(-1, name, lat, lon, timestamp);
+        }
+
+        public MarkerInfo(long id, String name, double lat, double lon, long timestamp) {
             this.name = name;
             this.id = id;
             this.lat = lat;
             this.lon = lon;
+            this.timestamp = timestamp;
         }
     }
 }

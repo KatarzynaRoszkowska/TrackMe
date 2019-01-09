@@ -38,9 +38,15 @@ public class MarkerActor implements Actor<MarkerEvent, MarkerState, MarkerEffect
         return mRepository
                 .getAllMarkers()
                 .map(markerInfos -> {
-                    List<MarkerState.MarkerEntity> entityList = new ArrayList<>();
+                    List<MarkerState.MarkerItem> entityList = new ArrayList<>();
                     for (MarkerRepository.MarkerInfo info : markerInfos) {
-                        entityList.add(new MarkerState.MarkerEntity(info.id, info.name, info.lat, info.lon));
+                        entityList.add(new MarkerState.MarkerItem(
+                                info.id,
+                                info.name,
+                                info.lat,
+                                info.lon,
+                                info.timestamp)
+                        );
                     }
                     return entityList;
                 })
@@ -69,9 +75,20 @@ public class MarkerActor implements Actor<MarkerEvent, MarkerState, MarkerEffect
     private Observable<MarkerEffect> savePointToRepository(Pair<LocationInfo, MarkerEvent.MarkPoint> pair) {
         LocationInfo location = pair.first;
         MarkerEvent.MarkPoint e = pair.second;
+        long timestamp = System.currentTimeMillis();
         return mRepository
-                .savePoint(e.name, location.lat, location.lon)
-                .map(id -> new MarkerEffect.MarkPoint(id, e.name, location.lat, location.lon))
+                .savePoint(new MarkerRepository.MarkerInfo(
+                        e.name,
+                        location.lat,
+                        location.lon,
+                        timestamp))
+                .map(id -> new MarkerEffect.MarkPoint(
+                        id,
+                        e.name,
+                        location.lat,
+                        location.lon,
+                        timestamp)
+                )
                 .cast(MarkerEffect.class);
     }
 }

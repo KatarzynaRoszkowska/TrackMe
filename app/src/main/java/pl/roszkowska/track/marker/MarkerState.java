@@ -5,7 +5,7 @@ import java.util.List;
 
 public class MarkerState {
 
-    public final List<MarkerEntity> mMarkerOptionsList;
+    public final List<MarkerItem> mMarkerOptionsList;
 
     public MarkerState() {
 
@@ -17,20 +17,23 @@ public class MarkerState {
 
     }
 
-    public static class MarkerEntity {
+    public static class MarkerItem {
         public final long id;
         public final String name;
         public final double lat;
         public final double lon;
+        public final long timestamp;
 
-        public MarkerEntity(long id,
-                            String name,
-                            double lastKnowLat,
-                            double lon) {
+        public MarkerItem(long id,
+                          String name,
+                          double lastKnowLat,
+                          double lon,
+                          long timestamp) {
             this.id = id;
             this.name = name;
             this.lat = lastKnowLat;
             this.lon = lon;
+            this.timestamp = timestamp;
         }
     }
 }

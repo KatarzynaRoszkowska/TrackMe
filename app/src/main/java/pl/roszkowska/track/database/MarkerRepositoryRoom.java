@@ -17,12 +17,13 @@ public class MarkerRepositoryRoom implements MarkerRepository {
     }
 
     @Override
-    public Observable<Long> savePoint(String name, double lat, double lon) {
+    public Observable<Long> savePoint(MarkerInfo markerInfo) {
         return Observable.create(emitter -> {
             MarkerEntity entity = new MarkerEntity();
-            entity.name = name;
-            entity.lat = lat;
-            entity.lon = lon;
+            entity.name = markerInfo.name;
+            entity.lat = markerInfo.lat;
+            entity.lon = markerInfo.lon;
+            entity.timestamp = markerInfo.timestamp;
 
             long id = mTrackDatabase.doaMarker().savePoint(entity);
             emitter.onNext(id);
@@ -39,11 +40,11 @@ public class MarkerRepositoryRoom implements MarkerRepository {
             List<MarkerInfo> infos = new ArrayList<>();
             for (MarkerEntity entity : markerInfo) {
                 infos.add(new MarkerInfo(
-                        entity.name,
                         entity.id,
+                        entity.name,
                         entity.lat,
-                        entity.lon
-                ));
+                        entity.lon,
+                        entity.timestamp));
             }
 
             emitter.onNext(infos);

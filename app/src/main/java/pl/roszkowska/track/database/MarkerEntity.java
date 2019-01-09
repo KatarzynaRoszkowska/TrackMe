@@ -10,5 +10,6 @@ public class MarkerEntity {
     String name;
     double lat;
     double lon;
+    long timestamp;
 
 }
