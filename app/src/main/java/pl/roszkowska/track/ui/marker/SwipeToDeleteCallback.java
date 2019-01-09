@@ -4,6 +4,9 @@ import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 
+import pl.roszkowska.track.marker.MarkerEvent;
+import pl.roszkowska.track.module.EventDispatcherModule;
+
 class SwipeToDeleteCallback extends ItemTouchHelper.SimpleCallback {
     private Adapter mAdapter;
 
@@ -26,6 +29,10 @@ class SwipeToDeleteCallback extends ItemTouchHelper.SimpleCallback {
     @Override
     public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int i) {
         int position = viewHolder.getAdapterPosition();
-        mAdapter.deleteItem(position);
+        long id = mAdapter.deleteItem(position);
+        EventDispatcherModule
+                .getModule()
+                .getDispatcher()
+                .sendEvent(new MarkerEvent.RemovePoint(id));
     }
 }

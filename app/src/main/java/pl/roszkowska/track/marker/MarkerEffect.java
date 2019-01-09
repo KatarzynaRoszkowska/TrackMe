@@ -28,9 +28,9 @@ public interface MarkerEffect {
     }
 
     class RemovePoint implements MarkerEffect {
-        final int id;
+        final long id;
 
-        public RemovePoint(int id) {
+        public RemovePoint(long id) {
             this.id = id;
         }
     }

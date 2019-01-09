@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.Observable;
-import io.reactivex.schedulers.Schedulers;
 import pl.roszkowska.track.common.Actor;
 import pl.roszkowska.track.location.LocationInfo;
 
@@ -54,13 +53,10 @@ public class MarkerActor implements Actor<MarkerEvent, MarkerState, MarkerEffect
     }
 
     private Observable<MarkerEffect> removePoint(MarkerEvent.RemovePoint event) {
-        return Observable
-                .create(emitter -> {
-                    emitter.onNext(new MarkerEffect.RemovePoint(event.id));
-                    emitter.onComplete();
-                })
-                .cast(MarkerEffect.class)
-                .observeOn(Schedulers.io());
+        return mRepository
+                .removePoint(event.id)
+                .map(MarkerEffect.RemovePoint::new)
+                .cast(MarkerEffect.class);
     }
 
     private Observable<MarkerEffect> markPoint(MarkerEvent.MarkPoint event) {

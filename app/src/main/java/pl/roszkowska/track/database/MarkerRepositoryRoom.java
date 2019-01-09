@@ -52,4 +52,15 @@ public class MarkerRepositoryRoom implements MarkerRepository {
         }).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }
+
+    @Override
+    public Observable<Long> removePoint(long id) {
+        return Observable.create(emitter -> {
+            mTrackDatabase.doaMarker().removePoint(id);
+            emitter.onNext(id);
+            emitter.onComplete();
+        }).cast(Long.class)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+    }
 }

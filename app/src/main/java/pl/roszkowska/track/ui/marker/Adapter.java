@@ -72,9 +72,10 @@ public class Adapter extends RecyclerView.Adapter<ViewHolder> {
         throw new IllegalStateException("Unknown item type for position: " + position);
     }
 
-    public void deleteItem(int position) {
+    public long deleteItem(int position) {
         mLastRemovedItemPosition = position;
         mLastRemovedItem = mModelList.remove(position);
         notifyItemRemoved(position);
+        return mLastRemovedItem.id;
     }
 }

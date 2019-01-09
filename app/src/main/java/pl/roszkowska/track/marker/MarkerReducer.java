@@ -21,7 +21,7 @@ public class MarkerReducer implements StateReducer<MarkerEffect, MarkerState> {
                     markerEffect.timestamp);
             outState.mMarkerOptionsList.add(item);
         } else if (effect instanceof MarkerEffect.RemovePoint) {
-            int removeId = ((MarkerEffect.RemovePoint) effect).id;
+            long removeId = ((MarkerEffect.RemovePoint) effect).id;
             for (MarkerItem entity : outState.mMarkerOptionsList) {
                 if (entity.id == removeId) {
                     outState.mMarkerOptionsList.remove(entity);

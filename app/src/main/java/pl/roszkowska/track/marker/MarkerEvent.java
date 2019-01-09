@@ -14,9 +14,9 @@ public interface MarkerEvent {
     }
 
     class RemovePoint implements MarkerEvent {
-        final int id;
+        final long id;
 
-        public RemovePoint(int id) {
+        public RemovePoint(long id) {
             this.id = id;
         }
     }

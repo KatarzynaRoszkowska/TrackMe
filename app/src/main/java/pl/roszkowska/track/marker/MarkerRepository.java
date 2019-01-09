@@ -10,6 +10,8 @@ public interface MarkerRepository {
 
     Observable<Long> savePoint(MarkerInfo markerInfo);
 
+    Observable<Long> removePoint(long id);
+
     class MarkerInfo {
         public final String name;
         public final long id;
