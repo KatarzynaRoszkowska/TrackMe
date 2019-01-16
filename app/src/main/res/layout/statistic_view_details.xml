@@ -58,7 +58,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:gravity="center"
-                    android:text="Długość trasy [km]"
+                    android:text="Długość trasy\n [km]"
                     android:textColor="#FFFFFF" />
 
                 <TextView
@@ -67,7 +67,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:gravity="center"
-                    android:text="Średnia prędkość [km/h]"
+                    android:text="Średnia prędkość\n [km/h]"
                     android:textColor="#FFFFFF" />
             </LinearLayout>
 
@@ -115,7 +115,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:gravity="center"
-                    android:text="Czas ruchu [h]"
+                    android:text="Czas ruchu\n [hh:mm:ss]"
                     android:textColor="#FFFFFF" />
 
                 <TextView
@@ -124,7 +124,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:gravity="center"
-                    android:text="Maksymalna prędkość [km/h]"
+                    android:text="Maksymalna prędkość\n [km/h]"
                     android:textColor="#FFFFFF" />
 
             </LinearLayout>

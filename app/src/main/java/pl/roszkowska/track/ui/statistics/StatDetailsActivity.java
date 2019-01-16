@@ -8,6 +8,7 @@ import android.widget.TextView;
 
 import java.text.DateFormat;
 import java.text.DecimalFormat;
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Observable;
@@ -20,6 +21,10 @@ import pl.roszkowska.track.module.TrackModule;
 import pl.roszkowska.track.statistics.StatisticsEvent;
 import pl.roszkowska.track.statistics.StatisticsState.RouteStatistics;
 import pl.roszkowska.track.ui.GraphBinder;
+
+import static java.util.concurrent.TimeUnit.HOURS;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static java.util.concurrent.TimeUnit.MINUTES;
 
 public class StatDetailsActivity extends AppCompatActivity {
     private TextView  distance, time, avgSpeed, maxSpeed;
@@ -83,8 +88,21 @@ public class StatDetailsActivity extends AppCompatActivity {
 
 
         avgSpeed.setText(String.valueOf(df.format(state.averageSpeed)));
-        time.setText(String.valueOf(state.trackTime / 1000));
+
+        //double tim = (double)state.trackTime /1000/60/60;
+        //time.setText(String.valueOf(df.format(tim)));
+
+
+        time.setText(formatDuration(state.trackTime));
         maxSpeed.setText(String.valueOf(df.format(state.maxSpeed)));
+    }
+
+    private String formatDuration(long millis) {
+        return String.format(Locale.getDefault(),
+                "%02d:%02d:%02d",
+                MILLISECONDS.toHours(millis),
+                MILLISECONDS.toMinutes(millis) - HOURS.toMinutes(MILLISECONDS.toHours(millis)),
+                MILLISECONDS.toSeconds(millis) - MINUTES.toSeconds(MILLISECONDS.toMinutes(millis)));
     }
 
     @Override
