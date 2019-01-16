@@ -73,9 +73,9 @@ public class StatDetailsActivity extends AppCompatActivity {
 
     private void update(RouteStatistics state) {
         mGraphBinder.bind(state);
-
+        double dist = (double) state.trackLength / 1000; //km
+        distance.setText(String.valueOf(dist));
         avgSpeed.setText(String.valueOf(state.averageSpeed));
-        distance.setText(String.valueOf(state.trackLength));
         time.setText(String.valueOf(state.trackTime / 1000));
         maxSpeed.setText(String.valueOf(state.maxSpeed));
     }
