@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.widget.TextView;
 
 import java.text.DateFormat;
+import java.text.DecimalFormat;
 import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Observable;
@@ -27,6 +28,9 @@ public class StatDetailsActivity extends AppCompatActivity {
     private EventDispatcher mEventDispatcher = TrackModule.getEventDispatcher();
     private CompositeDisposable mDisposable = new CompositeDisposable();
     private Disposable mUpdater;
+
+    DecimalFormat df = new DecimalFormat("####0.00");
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,11 +77,14 @@ public class StatDetailsActivity extends AppCompatActivity {
 
     private void update(RouteStatistics state) {
         mGraphBinder.bind(state);
+
         double dist = (double) state.trackLength / 1000; //km
-        distance.setText(String.valueOf(dist));
-        avgSpeed.setText(String.valueOf(state.averageSpeed));
+        distance.setText(String.valueOf(df.format(dist)));
+
+
+        avgSpeed.setText(String.valueOf(df.format(state.averageSpeed)));
         time.setText(String.valueOf(state.trackTime / 1000));
-        maxSpeed.setText(String.valueOf(state.maxSpeed));
+        maxSpeed.setText(String.valueOf(df.format(state.maxSpeed)));
     }
 
     @Override
