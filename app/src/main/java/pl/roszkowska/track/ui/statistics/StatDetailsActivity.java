@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.TextView;
 
+import java.text.DateFormat;
 import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Observable;
@@ -20,7 +21,7 @@ import pl.roszkowska.track.statistics.StatisticsState.RouteStatistics;
 import pl.roszkowska.track.ui.GraphBinder;
 
 public class StatDetailsActivity extends AppCompatActivity {
-    private TextView startTimeStamp, distance, time, avgSpeed, maxSpeed;
+    private TextView  distance, time, avgSpeed, maxSpeed;
 
     private GraphBinder mGraphBinder;
     private EventDispatcher mEventDispatcher = TrackModule.getEventDispatcher();
@@ -34,11 +35,11 @@ public class StatDetailsActivity extends AppCompatActivity {
 
         mGraphBinder = new GraphBinder(findViewById(R.id.deailsGraph));
 
-        startTimeStamp = findViewById(R.id.detailsStartTimeStamp);
         distance = findViewById(R.id.detailsDistance);
         time = findViewById(R.id.detailsTime);
         avgSpeed = findViewById(R.id.deatilsAvgSpeed);
         maxSpeed = findViewById(R.id.detailsMaxSpeed);
+
 
         long routeId = IntentCreator.readRouteId(getIntent());
 
@@ -74,9 +75,8 @@ public class StatDetailsActivity extends AppCompatActivity {
         mGraphBinder.bind(state);
 
         avgSpeed.setText(String.valueOf(state.averageSpeed));
-        startTimeStamp.setText(String.valueOf(state.trackTime));
         distance.setText(String.valueOf(state.trackLength));
-        time.setText(String.valueOf(state.trackTime / 1000) + "s");
+        time.setText(String.valueOf(state.trackTime / 1000));
         maxSpeed.setText(String.valueOf(state.maxSpeed));
     }
 
