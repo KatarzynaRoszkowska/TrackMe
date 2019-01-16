@@ -60,7 +60,9 @@
         <activity android:name=".LearningRx" />
         <activity
             android:name=".ui.statistics.MapRoutePreview"
-            android:label="@string/title_activity_map_route_preview" />
+            android:label="Zarejestrowana trasa" >
+        </activity>
+
         <activity android:name=".ui.marker.MarkerListActivity"></activity>
     </application>
 

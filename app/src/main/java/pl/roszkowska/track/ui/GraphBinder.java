@@ -46,9 +46,10 @@ public class GraphBinder {
         for (int i = 0; i < steps.size(); i++) {
             Step step = steps.get(i);
             points[i] = new DataPoint(
-                    step.time,
-                    step.distance);
+                    (double) step.time/60/60,
+                    (double)step.distance/1000);
         }
+
         return points;
     }
 }
