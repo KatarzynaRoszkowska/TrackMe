@@ -63,7 +63,12 @@
             android:label="Zarejestrowana trasa" >
         </activity>
 
-        <activity android:name=".ui.marker.MarkerListActivity"></activity>
+        <activity android:name=".ui.marker.MarkerListActivity"
+            android:label="Moje punkty">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".ui.statistics.list.StatisticsActivity" />
+        </activity>
     </application>
 
 </manifest>
